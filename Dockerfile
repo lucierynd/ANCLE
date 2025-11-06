@@ -12,7 +12,9 @@ RUN apt-get update && apt-get install -y \
     ros-humble-rviz2 \
     ros-humble-pcl-conversions \
     curl \
+    nano \
     gnupg \
+    python3-smbus2 \
     lsb-release && \
     rm -rf /var/lib/apt/lists/*
 
@@ -20,13 +22,17 @@ RUN apt-get update && apt-get install -y \
 RUN pip install -U colcon-common-extensions
 
 # Create and build the workspace
-WORKDIR /d2_ws
+# WORKDIR /d2_ws
 RUN mkdir -p src && \
     cd src && \
     git clone https://github.com/CygLiDAR-ROS/cyglidar_d2.git
 
+COPY ./src /ros2_ws/src
+COPY ./tools /ros2_ws/tools
+
 # Source ROS and build
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build --symlink-install"
+RUN echo "source /ros2_ws/install/setup.bash" >> ~/.bashrc
 
 # Set up entrypoint
 CMD ["/bin/bash"]
