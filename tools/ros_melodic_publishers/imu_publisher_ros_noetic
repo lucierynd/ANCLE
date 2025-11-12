@@ -14,7 +14,7 @@ class IMUPublisher(object):
         self.I2C_BUS = rospy.get_param('~i2c_bus', 7)
         self.ADDRESS = rospy.get_param('~address', 0x6B)
         self.frame_id = rospy.get_param('~frame_id', 'imu_link')
-        self.rate_hz = rospy.get_param('~rate', 200.0)  # 200 Hz default
+        self.rate_hz = rospy.get_param('~rate', 800.0)  # 800 Hz 
 
         # --- I2C setup ---
         self.bus = SMBus(self.I2C_BUS)
@@ -24,13 +24,13 @@ class IMUPublisher(object):
         if who_am_i != 0x6B:
             rospy.logwarn("Unexpected device ID — check wiring or address")
 
-        # Configure accelerometer: 104 Hz, ±4 g
-        self.bus.write_byte_data(self.ADDRESS, 0x10, 0b01010000)
-        # Configure gyroscope: 104 Hz, 2000 dps
-        self.bus.write_byte_data(self.ADDRESS, 0x11, 0b01001100)
+        # Configure accelerometer:  833 Hz, ±2 g
+        self.bus.write_byte_data(self.ADDRESS, 0x10, 0b01110000)
+        # Configure gyroscope: 833 Hz, 2000 dps
+        self.bus.write_byte_data(self.ADDRESS, 0x11, 0b01111100)
 
         # --- Conversion factors ---
-        self.ACC_SENS = 0.122 / 1000.0   # g/LSB
+        self.ACC_SENS = 0.061 / 1000.0   # g/LSB
         self.GYRO_SENS = 70 / 1000.0     # dps/LSB
 
         # --- ROS Publisher ---
@@ -54,9 +54,9 @@ class IMUPublisher(object):
                 ax, ay, az = self.read_xyz(0x28)
 
                 # Convert to physical units
-                ax_g = ax * self.ACC_SENS * 9.80665
-                ay_g = ay * self.ACC_SENS * 9.80665
-                az_g = az * self.ACC_SENS * 9.80665
+                ax_g = ax * self.ACC_SENS
+                ay_g = ay * self.ACC_SENS
+                az_g = az * self.ACC_SENS
 
                 gx_rps = math.radians(gx * self.GYRO_SENS)
                 gy_rps = math.radians(gy * self.GYRO_SENS)

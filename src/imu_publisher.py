@@ -23,18 +23,18 @@ class IMUPublisher(Node):
         if who_am_i != 0x6B:
             self.get_logger().warn("Unexpected device ID — check wiring or address")
 
-        # Configure accelerometer: 104 Hz, ±4g
-        self.bus.write_byte_data(self.ADDRESS, 0x10, 0b01010000)
-        # Configure gyroscope: 104 Hz, 2000 dps
-        self.bus.write_byte_data(self.ADDRESS, 0x11, 0b01001100)
+        # Configure accelerometer:  833 Hz, ±2 g
+        self.bus.write_byte_data(self.ADDRESS, 0x10, 0b01110000)
+        # Configure gyroscope: 833 Hz, 2000 dps
+        self.bus.write_byte_data(self.ADDRESS, 0x11, 0b01111100)
 
-        # Conversion factors
-        self.ACC_SENS = 0.122 / 1000.0   # g/LSB
+        # --- Conversion factors ---
+        self.ACC_SENS = 0.061 / 1000.0   # g/LSB
         self.GYRO_SENS = 70 / 1000.0     # dps/LSB
 
         # ROS 2 publisher
-        self.publisher_ = self.create_publisher(Imu, 'imu/data_raw', 10)
-        timer_period = 0.2  # seconds
+        self.publisher_ = self.create_publisher(Imu, 'imu/data', 10)
+        timer_period = 0.00125  # seconds (800 Hz)
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
         self.get_logger().info("IMU publisher node started")
@@ -51,9 +51,9 @@ class IMUPublisher(Node):
             ax, ay, az = self.read_xyz(0x28)
 
             # Convert to physical units
-            ax_g = ax * self.ACC_SENS * 9.80665   # convert g to m/s²
-            ay_g = ay * self.ACC_SENS * 9.80665
-            az_g = az * self.ACC_SENS * 9.80665
+            ax_g = ax * self.ACC_SENS  # g
+            ay_g = ay * self.ACC_SENS 
+            az_g = az * self.ACC_SENS 
 
             gx_rps = math.radians(gx * self.GYRO_SENS)  # dps to rad/s
             gy_rps = math.radians(gy * self.GYRO_SENS)
