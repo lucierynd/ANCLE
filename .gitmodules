@@ -1,0 +1,3 @@
+[submodule "src/FAST_LIO"]
+	path = src/FAST_LIO
+	url = git@github.com:lucierynd/FAST_LIO.git
