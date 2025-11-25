@@ -14,7 +14,7 @@ class IMUPublisher(object):
         self.I2C_BUS = rospy.get_param('~i2c_bus', 7)
         self.ADDRESS = rospy.get_param('~address', 0x6B)
         self.frame_id = rospy.get_param('~frame_id', 'imu_link')
-        self.rate_hz = rospy.get_param('~rate', 800.0)  # 200 Hz default
+        self.rate_hz = rospy.get_param('~rate', 800.0)  # 800 Hz default
 
         # --- I2C setup ---
         self.bus = SMBus(self.I2C_BUS)
@@ -54,9 +54,9 @@ class IMUPublisher(object):
                 ax, ay, az = self.read_xyz(0x28)
 
                 # Convert to physical units
-                ax_g = ax * self.ACC_SENS 
-                ay_g = ay * self.ACC_SENS 
-                az_g = az * self.ACC_SENS 
+                ax_g = ax * self.ACC_SENS * 9.805
+                ay_g = ay * self.ACC_SENS * 9.805
+                az_g = az * self.ACC_SENS * 9.805
 
                 gx_rps = math.radians(gx * self.GYRO_SENS)
                 gy_rps = math.radians(gy * self.GYRO_SENS)
@@ -97,3 +97,4 @@ if __name__ == '__main__':
         node.spin()
     except rospy.ROSInterruptException:
         pass
+

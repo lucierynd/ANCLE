@@ -68,10 +68,13 @@ RUN mkdir -p src && \
 # Fast LIO
 WORKDIR /ros2_ws/src
 
-RUN git clone https://github.com/Ericsii/FAST_LIO.git --recursive && \
-    cd .. && \
+COPY ./src/FAST_LIO ./FAST_LIO
+
+RUN cd .. && \
     rosdep install --from-paths src --ignore-src -y && \
-    /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build --symlink-install && source /ros2_ws/install/setup.bash"
+    /bin/bash -c "source /opt/ros/humble/setup.bash && \
+                  colcon build --symlink-install && \
+                  source /ros2_ws/install/setup.bash"
     
 # =============================================================
 
