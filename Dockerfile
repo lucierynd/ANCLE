@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     nano \
     gnupg \
+    wget \
     python3-smbus2 \
     lsb-release && \
     rm -rf /var/lib/apt/lists/*
@@ -39,13 +40,25 @@ RUN mkdir -p src && \
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build --symlink-install"
 RUN echo "source /d2_ws/install/setup.bash" >> ~/.bashrc
 
-# =============================================================
-# Setup ANCLE package
-# =============================================================
-WORKDIR /ancle
 
-COPY ./src /ancle/src
-COPY ./tools /ancle/tools
+# =============================================================
+# Setup Ceres Solver
+# =============================================================
+
+RUN apt-get update && apt-get install -y \
+    libgoogle-glog-dev \
+    libgflags-dev
+
+WORKDIR /home
+
+RUN git clone --depth=1 -b 2.2.0 https://ceres-solver.googlesource.com/ceres-solver && \
+    cd ceres-solver && \
+    mkdir build && \
+    cd build && \
+    cmake .. && \
+    make && \
+    make install
+
 
 # =============================================================
 # Setup Fast LIO
