@@ -34,7 +34,7 @@ class IMUPublisher(Node):
 
         # ROS 2 publisher
         self.publisher_ = self.create_publisher(Imu, 'imu/data', 10)
-        timer_period = 0.00125  # seconds (800 Hz)
+        timer_period = 0.0025  # seconds (400 Hz)
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
         self.get_logger().info("IMU publisher node started")
@@ -73,10 +73,10 @@ class IMUPublisher(Node):
             msg.angular_velocity.z = gz_rps
 
             self.publisher_.publish(msg)
-            self.get_logger().info(
-                f"Accel [m/s²]: X={ax_g:.3f}, Y={ay_g:.3f}, Z={az_g:.3f} | "
-                f"Gyro [rad/s]: X={gx_rps:.3f}, Y={gy_rps:.3f}, Z={gz_rps:.3f}"
-            )
+            # self.get_logger().info(
+            #     f"Accel [m/s²]: X={ax_g:.3f}, Y={ay_g:.3f}, Z={az_g:.3f} | "
+            #     f"Gyro [rad/s]: X={gx_rps:.3f}, Y={gy_rps:.3f}, Z={gz_rps:.3f}"
+            # )
 
         except Exception as e:
             self.get_logger().error(f"Read error: {e}")

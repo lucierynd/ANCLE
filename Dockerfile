@@ -78,10 +78,12 @@ RUN mkdir -p src && \
     /bin/bash -c "source /opt/ros/humble/setup.bash && colcon build --symlink-install"
 
 
-# Fast LIO
+# Fast LIO and LiDAR_IMU_Init
 WORKDIR /ros2_ws/src
 
 COPY ./src/FAST_LIO ./FAST_LIO
+COPY ./src/LiDAR_IMU_Init ./LiDAR_IMU_Init
+
 
 RUN cd .. && \
     rosdep install --from-paths src --ignore-src -y && \
