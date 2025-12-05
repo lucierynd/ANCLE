@@ -28,7 +28,7 @@ class IMUPublisher(Node):
 
             msg.linear_acceleration.x = 0.0
             msg.linear_acceleration.y = 0.0
-            msg.linear_acceleration.z = -9.81
+            msg.linear_acceleration.z = 1.0
 
             msg.angular_velocity.x = 0.0
             msg.angular_velocity.y = 0.0

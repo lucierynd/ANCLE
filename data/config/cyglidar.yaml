@@ -3,7 +3,7 @@
         feature_extract_enable: false
         point_filter_num: 2
         max_iteration: 8
-        cube_side_length: 200.0
+        cube_side_length: 10.0
         runtime_pos_log_enable: false
         map_file_path: "./test.pcd"
         common:
@@ -13,7 +13,7 @@
         preprocess:
             lidar_type: 4
             scan_line: 6 # ignored for lidar_type=4
-            blind: 0.3
+            blind: 0.5
 
         initialization:
             cut_frame_num: 1 # must be positive integer
@@ -21,14 +21,14 @@
             mean_acc_norm: 9.805 # m/s^2
             online_refine_time: 20.0
             data_accum_length: 400.0
-            Rot_LI_cov: [ 0.05, 0.05, 0.05 ]
-            Trans_LI_cov: [ 0.01, 0.01, 0.01 ]
+            Rot_LI_cov: [ 0.00005, 0.00005, 0.00005 ]
+            Trans_LI_cov: [ 0.00001, 0.00001, 0.00001 ]
 
         mapping:
-            filter_size_surf: 0.01
+            filter_size_surf: 0.05
             filter_size_map: 0.15
-            gyr_cov: 5.0
-            acc_cov: 0.2
+            gyr_cov: 0.05
+            acc_cov: 0.08
             b_acc_cov: 1.0e-4 
             b_gyr_cov: 1.0e-4
             det_range: 2.5

@@ -2,7 +2,7 @@
     "files.autoSave": "onFocusChange",
     "vscode-pets.petSize": "small",
     "vscode-pets.position": "explorer",
-    "vscode-pets.theme": "autumn",
+    "vscode-pets.theme": "winter",
     "vscode-pets.petColor": "black",
     "vscode-pets.petType": "cat",
     "vscode-pets.throwBallWithMouse": true

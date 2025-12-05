@@ -34,7 +34,7 @@ class IMUPublisher(Node):
 
         # ROS 2 publisher
         self.publisher_ = self.create_publisher(Imu, 'imu/data', 10)
-        timer_period = 0.0025  # seconds (400 Hz)
+        timer_period = 0.00125  # seconds (800 Hz)
         self.timer = self.create_timer(timer_period, self.timer_callback)
 
         self.get_logger().info("IMU publisher node started")
@@ -64,9 +64,9 @@ class IMUPublisher(Node):
             msg.header.stamp = self.get_clock().now().to_msg()
             msg.header.frame_id = 'imu_link'
 
-            msg.linear_acceleration.x = ax_g
-            msg.linear_acceleration.y = ay_g
-            msg.linear_acceleration.z = az_g
+            msg.linear_acceleration.x = ax_g * 9.81  # convert g to m/s²
+            msg.linear_acceleration.y = ay_g * 9.81
+            msg.linear_acceleration.z = az_g * 9.81
 
             msg.angular_velocity.x = gx_rps
             msg.angular_velocity.y = gy_rps

@@ -81,8 +81,8 @@ RUN mkdir -p src && \
 # Fast LIO and LiDAR_IMU_Init
 WORKDIR /ros2_ws/src
 
-COPY ./src/FAST_LIO ./FAST_LIO
-COPY ./src/LiDAR_IMU_Init ./LiDAR_IMU_Init
+COPY /home/robotuna/ANCLE/src/FAST_LIO ./FAST_LIO
+COPY /home/robotuna/ANCLE/src/LiDAR_IMU_Init ./LiDAR_IMU_Init
 
 
 RUN cd .. && \
