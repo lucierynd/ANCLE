@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     ros-humble-desktop \
     ros-humble-rviz2 \
     ros-humble-pcl-conversions \
+    ros-humble-robot-localization \
     curl \
     nano \
     gnupg \
@@ -44,6 +45,18 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && rosdep update && rosdep i
 
 WORKDIR /ros2_ws/src
 RUN git clone -b ros2 https://github.com/Slamtec/rplidar_ros.git
+
+# =============================================================
+# RF2O SETUP
+# =============================================================
+
+RUN git clone https://github.com/MAPIRlab/rf2o_laser_odometry.git
+
+# =============================================================
+# ANCLE custom package setup
+# =============================================================
+
+COPY src/ancle_pkg /ros2_ws/src/ancle_pkg 
 
 # =============================================================
 # Final setup

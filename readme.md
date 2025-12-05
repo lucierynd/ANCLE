@@ -5,7 +5,7 @@
 **Build the image**
 
 ```
-docker build . -t ancle_ros_humble_image
+docker build . -t ancle_slam_toolbox_ros_humble_image
 ```
 
 **Allow display**
@@ -17,7 +17,7 @@ xhost +local:root
 **Run the container**
 
 ```
-docker run -it --rm \
+docker run -it --rm\
   --net=host \
   --env="DISPLAY=$DISPLAY" \
   --env="QT_X11_NO_MITSHM=1" \
@@ -29,8 +29,8 @@ docker run -it --rm \
   --device=/dev/ttyUSB0:/dev/ttyUSB0 \
   --device /dev/i2c-7 \
   -v /dev:/dev \
-  -v ~/ros_humble_docker:/root/ros_ws \
-  --name ancle_ros_humble_container \
-  ancle_ros_humble_image \
+  -v /home/robotuna/ANCLE:/home/ANCLE \
+  --name ancle_slam_toolbox_humble_container \
+  ancle_slam_toolbox_humble_image \
   bash
 ```
