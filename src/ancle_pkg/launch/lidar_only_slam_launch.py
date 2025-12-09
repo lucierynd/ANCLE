@@ -14,6 +14,7 @@ def generate_launch_description():
     custom_pkg='ancle_pkg' 
     lidar_pkg='rplidar_ros'
     tf_publisher_pkg='tf2_ros'
+    rf2o_pkg='rf2o_laser_odometry'
     slam_pkg='slam_toolbox'
 
     # Declare the launch argument for RViz
@@ -37,32 +38,10 @@ def generate_launch_description():
         arguments=['0.0', '0.0', '0.1', '0.0', '0.0', '0.0', 'base_link', 'laser']
     )
 
-    # transform from imu to base_link
-    transform_imu_base_link = Node(
-        package=tf_publisher_pkg,
-        executable='static_transform_publisher',
-        name='transform_imu_base_link',
-        arguments=['0.0', '0.0', '0.0', '0.0', '0.0', '0.0', 'base_link', 'imu_link']
-    )
-
-    # IMU python publisher 
-    imu_publisher = Node(
-        package=custom_pkg,
-        executable='imu_publisher.py',
-        name='imu_publisher'
-    )
-
-
-    # RF2O Node
+    # rf2o Node
     rf2o = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(custom_pkg),'launch','rf2o_no_tf_launch.py')])
-    )
-
-    # EKF Node
-    ekf = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(custom_pkg),'launch','ekf_launch.py')])
+                    get_package_share_directory(rf2o_pkg),'launch','rf2o_laser_odometry.launch.py')])
     )
 
     # SLAM Toolbox Node
@@ -84,17 +63,12 @@ def generate_launch_description():
         condition=IfCondition(LaunchConfiguration('use_rviz'))
     )
 
-
-
     # Launch them all!
     return LaunchDescription([
         declare_rviz_arg,
         rplidar,
         transform_lidar_base_link,
-        transform_imu_base_link,
-        imu_publisher,
         rf2o,
-        ekf,
         slam_toolbox,
         rviz
     ])
