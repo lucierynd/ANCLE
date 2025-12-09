@@ -1,6 +1,8 @@
 # Autonomous Navigation in Cluttered Littoral Environments
 
-# Structure:
+## Structure:
+
+**Lidar inertial 2D SLAM**
 
 ```bash
 ┌─────────────┐     ┌──────────────────────┐     ┌─────────────────┐
@@ -14,6 +16,8 @@
 └─────────────┘
 ```
 
+**Lidar only 2D SLAM**
+
 ```bash
 ┌─────────────┐     ┌──────────────────────┐     ┌─────────────────┐
 │  PLidar C1  │────▶│  rf2o_laser_odometry │────▶│  SLAM Toolbox   │
@@ -23,9 +27,9 @@
 
 ---
 
-# Instructions:
+## Instructions:
 
-## Docker stuff:
+**Docker stuff:**
 
 Build docker image:
 
@@ -60,7 +64,7 @@ Container in new terminal window:
 docker exec -it ancle_slam_toolbox_humble_container bash
 ```
 
-## Run lidar inertial slam
+**Run lidar inertial slam**
 
 Basic launch:
 
@@ -74,7 +78,7 @@ Or without rviz:
 ros2 launch ancle_pkg lidar_inertial_slam_launch.py use_rviz:=false
 ```
 
-## Run lidar only slam
+**Run lidar only slam**
 
 Basic launch:
 
