@@ -1,22 +1,41 @@
 # Autonomous Navigation in Cluttered Littoral Environments
 
-### Docker stuff
+# Structure:
 
-**Build the image**
-
+```bash
+┌─────────────┐     ┌──────────────────────┐     ┌─────────────────┐
+│  PLidar C1  │────▶│  rf2o_laser_odometry │────▶│                 │
+│   /scan     │     │  (laser odom)        │     │  robot_locali-  │     ┌───────────────┐
+└─────────────┘     └──────────────────────┘     │  sation (EKF)   │────▶│ SLAM Toolbox  │
+                                                 │                 │     │  /odom        │
+┌─────────────┐                                  │  Fused /odom    │     └───────────────┘
+│    IMU      │─────────────────────────────────▶│                 │
+│   /imu      │                                  └─────────────────┘
+└─────────────┘
 ```
-docker build . -t ancle_slam_toolbox_ros_humble_image
+
+```bash
+┌─────────────┐     ┌──────────────────────┐     ┌─────────────────┐
+│  PLidar C1  │────▶│  rf2o_laser_odometry │────▶│  SLAM Toolbox   │
+│   /scan     │     │  (laser odom)        │     │  /odom          │
+└─────────────┘     └──────────────────────┘     └─────────────────┘
 ```
 
-**Allow display**
+---
 
-```
-xhost +local:root
+# Instructions:
+
+## Docker stuff:
+
+Build docker image:
+
+```bash
+docker build -f tools/Docker/dockerfile_ros_humble_slam_toolbox/Dockerfile -t ancle_slam_toolbox_humble_image .
 ```
 
-**Run the container**
+Starting container:
 
-```
+```bash
 docker run -it --rm\
   --net=host \
   --env="DISPLAY=$DISPLAY" \
@@ -33,4 +52,38 @@ docker run -it --rm\
   --name ancle_slam_toolbox_humble_container \
   ancle_slam_toolbox_humble_image \
   bash
+```
+
+Container in new terminal window:
+
+```bash
+docker exec -it ancle_slam_toolbox_humble_container bash
+```
+
+## Run lidar inertial slam
+
+Basic launch:
+
+```bash
+ros2 launch ancle_pkg lidar_inertial_slam_launch.py
+```
+
+Or without rviz:
+
+```bash
+ros2 launch ancle_pkg lidar_inertial_slam_launch.py use_rviz:=false
+```
+
+## Run lidar only slam
+
+Basic launch:
+
+```bash
+ros2 launch ancle_pkg lidar_only_slam_launch.py 
+```
+
+Or without rviz:
+
+```bash
+ros2 launch ancle_pkg lidar_only_slam_launch.py use_rviz:=false
 ```
