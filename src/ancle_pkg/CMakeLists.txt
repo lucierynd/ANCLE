@@ -12,7 +12,7 @@ if(NOT CMAKE_CXX_STANDARD)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
+  add_compile_options(-Wall -Wextra -WPedantic)
 endif()
 
 # find dependencies
@@ -23,9 +23,17 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
+# Install launch/config/src folders
 install(
-  DIRECTORY config launch
+  DIRECTORY config launch src rviz
   DESTINATION share/${PROJECT_NAME}
+)
+
+# Install python executables to lib/<pkgname>
+install(
+  PROGRAMS
+    src/imu_publisher.py
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 ament_package()

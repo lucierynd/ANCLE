@@ -1,0 +1,90 @@
+import os
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.actions import Node
+from ament_index_python.packages import get_package_share_directory
+
+
+
+def generate_launch_description():
+
+    # Define package names
+    custom_pkg='ancle_pkg' 
+    lidar_pkg='rplidar_ros'
+    tf_publisher_pkg='tf2_ros'
+    slam_pkg='slam_toolbox'
+
+    # Start RPlidar
+    rplidar = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory(lidar_pkg),'launch','rplidar_c1_launch.py')])
+    )
+
+    # transform from lidar to base_link
+    transform_lidar_base_link = Node(
+        package=tf_publisher_pkg,
+        executable='static_transform_publisher',
+        name='transform_lidar_base_link',
+        arguments=['0.0', '0.0', '0.1', '0.0', '0.0', '0.0', 'base_link', 'laser']
+    )
+
+    # transform from imu to base_link
+    transform_imu_base_link = Node(
+        package=tf_publisher_pkg,
+        executable='static_transform_publisher',
+        name='transform_imu_base_link',
+        arguments=['0.0', '0.0', '0.0', '0.0', '0.0', '0.0', 'base_link', 'imu_link']
+    )
+
+    # IMU python publisher 
+    imu_publisher = Node(
+        package=custom_pkg,
+        executable='imu_publisher.py',
+        name='imu_publisher'
+    )
+
+
+    # RF2O Node
+    rf2o = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory(custom_pkg),'launch','rf2o_no_tf_launch.py')])
+    )
+
+    # EKF Node
+    ekf = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory(custom_pkg),'launch','ekf_launch.py')])
+    )
+
+    # SLAM Toolbox Node
+    slam_toolbox = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory(slam_pkg),'launch','online_async_launch.py')]),
+                launch_arguments={'slam_params_file': os.path.join(
+                    get_package_share_directory(custom_pkg), 'config', 'slam_toolbox_rplidar_config.yaml')}.items()
+    )
+
+    # RViz Node 
+    rviz = Node(
+        package='rviz2' ,
+        executable='rviz2',
+        name='rviz2',
+        arguments=['-d', os.path.join(
+            get_package_share_directory(custom_pkg), 'rviz', 'rviz_slam_tool_box_config.rviz')],
+        output='screen'
+    )
+
+
+
+    # Launch them all!
+    return LaunchDescription([
+        rplidar,
+        transform_lidar_base_link,
+        transform_imu_base_link,
+        imu_publisher,
+        rf2o,
+        ekf,
+        slam_toolbox,
+        rviz
+    ])
