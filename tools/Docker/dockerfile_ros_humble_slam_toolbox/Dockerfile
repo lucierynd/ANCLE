@@ -40,11 +40,15 @@ WORKDIR /ros2_ws
 RUN /bin/bash -c "source /opt/ros/humble/setup.bash && rosdep update && rosdep install -y -r --from-paths src --ignore-src --rosdistro=humble"
 
 # =============================================================
-# RPLIDAR C1 SETUP
+# Lidar Set up
 # =============================================================
 
+# RPLIDAR
 WORKDIR /ros2_ws/src
 RUN git clone -b ros2 https://github.com/Slamtec/rplidar_ros.git
+
+# CYGLIDAR D2
+RUN git clone https://github.com/CygLiDAR-ROS/cyglidar_d2.git
 
 # =============================================================
 # RF2O SETUP
