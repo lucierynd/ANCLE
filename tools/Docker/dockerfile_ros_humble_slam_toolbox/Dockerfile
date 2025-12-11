@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
     ros-humble-rviz2 \
     ros-humble-pcl-conversions \
     ros-humble-robot-localization \
+    ros-humble-navigation2 \
+    ros-humble-nav2-bringup \
     curl \
     nano \
     gnupg \
@@ -18,6 +20,7 @@ RUN apt-get update && apt-get install -y \
     python3-smbus2 \
     lsb-release && \
     rm -rf /var/lib/apt/lists/*
+
 
 # Install colcon
 RUN pip install -U colcon-common-extensions

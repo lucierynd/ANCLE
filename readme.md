@@ -45,13 +45,14 @@ docker run -it --rm\
   --env="DISPLAY=$DISPLAY" \
   --env="QT_X11_NO_MITSHM=1" \
   --env="XAUTHORITY=$XAUTH" \
-  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+  --volume="/tmp/.X11-unix:/tmp/. X11-unix:rw" \
   --runtime nvidia \
   --gpus all \
-  --privileged \
-  --device=/dev/ttyUSB0:/dev/ttyUSB0 \
-  --device /dev/i2c-7 \
-  -v /dev:/dev \
+  --device=/dev/cyglidar:/dev/cyglidar \
+  --device=/dev/rplidar:/dev/rplidar \
+  --device=$(readlink -f /dev/cyglidar) \
+  --device=$(readlink -f /dev/rplidar) \
+  --device=/dev/i2c-7:/dev/i2c-7 \
   -v /home/robotuna/ANCLE:/home/ANCLE \
   --name ancle_slam_toolbox_humble_container \
   ancle_slam_toolbox_humble_image \
