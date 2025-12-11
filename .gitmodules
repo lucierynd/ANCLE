@@ -4,3 +4,6 @@
 [submodule "src/LiDAR_IMU_Init"]
 	path = src/LiDAR_IMU_Init
 	url = git@github.com:lucierynd/LiDAR_IMU_Init.git
+[submodule "src/Gazebo-Garden-Simulation"]
+	path = src/Gazebo-Garden-Simulation
+	url = git@github.com:lucierynd/Gazebo-Garden-Simulation.git
