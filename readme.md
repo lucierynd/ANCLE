@@ -92,3 +92,17 @@ Or without rviz:
 ```bash
 ros2 launch ancle_pkg lidar_only_slam_launch.py use_rviz:=false
 ```
+
+**Run nav2 multi lidar inertial slam + obstacle detection**
+
+Start both lidar + lidar inertial slam:
+
+```bash
+ros2 launch ancle_pkg nav2_multi_lidar_inertial_slam_launch.py 
+```
+
+Once everything looks set up, start rviz:
+
+```bash
+ros2 launch nav2_bringup navigation_launch.py params_file:=/ros2_ws/src/ancle_pkg/config/nav2_config.yaml 
+```
