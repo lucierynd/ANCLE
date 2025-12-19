@@ -1,9 +1,0 @@
-[submodule "src/FAST_LIO"]
-	path = src/FAST_LIO
-	url = git@github.com:lucierynd/FAST_LIO.git
-[submodule "src/LiDAR_IMU_Init"]
-	path = src/LiDAR_IMU_Init
-	url = git@github.com:lucierynd/LiDAR_IMU_Init.git
-[submodule "src/Gazebo-Garden-Simulation"]
-	path = src/Gazebo-Garden-Simulation
-	url = git@github.com:lucierynd/Gazebo-Garden-Simulation.git
