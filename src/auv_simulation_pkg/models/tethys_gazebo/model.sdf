@@ -1,0 +1,680 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <model name="tethys">
+    <self_collide>false</self_collide>
+    <pose>0 0 0 0 0 0</pose>
+    <static>false</static>
+    <!-- Body -->
+    <link name="base_link">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <mass>147.8671</mass>
+        <inertia>
+          <ixx>3.000000</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>41.980233</iyy>
+          <iyz>0</iyz>
+          <izz>41.980233</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="base_link_collision">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>2 0.3 0.246445166667</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="base_link_visual">
+        <geometry>
+          <mesh>
+            <uri>meshes/tethys.dae</uri>
+            <submesh>
+              <name>Body</name>
+              <center>false</center>
+            </submesh>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+              <albedo_map>materials/textures/Tethys_Albedo.png</albedo_map>
+              <normal_map>materials/textures/Tethys_Normal.png</normal_map>
+              <metalness_map>materials/textures/Tethys_Metalness.png</metalness_map>
+              <roughness_map>materials/textures/Tethys_Roughness.png</roughness_map>
+            </metal>
+          </pbr>
+          <script>
+            <uri>materials/scripts/</uri>
+            <uri>materials/textures/</uri>
+            <name>tethys/Tethys_Diffuse</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <!-- Sensors -->
+    <!-- imu (centered) -->
+    <link name="imu_link">
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.00001</mass>
+        <inertia>
+          <ixx>0.0000000016875</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000000000001</iyy>
+          <iyz>0</iyz>
+          <izz>0.0000000016875</izz>
+        </inertia>
+      </inertial>
+      <sensor name="imu" type="imu">
+        <update_rate>30</update_rate>
+        <visualize>false</visualize>
+      </sensor>
+    </link>
+    
+    <joint name="imu_link_joint" type="fixed">
+      <child>imu_link</child>
+      <parent>base_link</parent>
+    </joint>
+
+    <!-- 2D lidar 360 (underneath)-->
+    <link name="scan_omni">
+      <pose>0 0 -0.2 3.14 0 0</pose>
+      <inertial>
+        <pose>0 0 0.2 -3.14 0 0</pose>
+        <mass>0.00001</mass>
+        <inertia>
+          <ixx>0.0000000016875</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000000000001</iyy>
+          <iyz>0</iyz>
+          <izz>0.0000000016875</izz>
+        </inertia>
+      </inertial>
+      <visual name="velodyne_base">
+        <pose>0 0 -0.035 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.06</radius>
+            <length>0.0015</length>
+          </cylinder>
+        </geometry>
+      </visual>
+      <visual name="velodyne_suport_1">
+        <pose>-0.035 0.035 -0.08 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.005</radius>
+            <length>0.09</length>
+          </cylinder>
+        </geometry>
+      </visual>
+      <visual name="velodyne_suport_2">
+        <pose>-0.035 -0.035 -0.08 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.005</radius>
+            <length>0.09</length>
+          </cylinder>
+        </geometry>
+      </visual>
+      <visual name="velodyne_suport_3">
+        <pose>0.0495 0 -0.08 0 0 0</pose>
+        <geometry>
+          <cylinder>
+            <radius>0.005</radius>
+            <length>0.09</length>
+          </cylinder>
+        </geometry>
+      </visual>
+      <!-- Bottom cylinder of Ouster/Velodyne 3D Lidar -->
+      <visual name="velodyne_base_link_visual_base">
+        <pose>0 0 -0.035 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/VLP16_base_1.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <!-- Top cylinder of Ouster/Velodyne 3D Lidar -->
+      <visual name="velodyne_base_link_visual_sensor">
+        <pose>0 0 -0.035 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/VLP16_base_2.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <!-- Main cylinder of Ouster/Velodyne 3D Lidar -->
+      <visual name="base_link_velodyne_visual_scan">
+        <pose>0 0 -0.035 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>meshes/VLP16_scan.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <sensor name="scan_omni" type="gpu_lidar">
+        <update_rate>10</update_rate>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>900</samples>
+              <resolution>1</resolution>
+              <min_angle>-3.141592654</min_angle>
+              <max_angle>3.141592654</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>16</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.261799388</min_angle>
+              <max_angle>0.261799388</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>0.5</min>
+            <max>100.0</max>
+            <resolution>0.015</resolution>
+          </range>
+        </lidar>
+      </sensor>
+    </link>
+
+    <joint name="scan_omni_joint" type="fixed">
+      <child>scan_omni</child>
+      <parent>base_link</parent>
+    </joint>
+
+    <!-- Camera (front of the AUV) -->
+    <link name="camera_front">
+      <pose>-0.80 0.10 0 0 0 3.14</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.00001</mass>
+        <inertia>
+          <ixx>0.0000000016875</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000000000001</iyy>
+          <iyz>0</iyz>
+          <izz>0.0000000016875</izz>
+        </inertia>
+      </inertial>
+      <visual name="camera_visual">
+        <pose>0 0 0 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>0.05 0.03 0.03</size>
+          </box>
+        </geometry>
+      </visual>
+      <sensor name="color" type="camera">
+        <pose>0 0.0325 0.0125 0 0 0</pose>
+        <update_rate>6</update_rate>
+        <always_on>0</always_on>
+        <camera>
+          <horizontal_fov>1.20427718</horizontal_fov>
+          <image>
+            <width>848</width>
+            <height>480</height>
+          </image>
+          <clip>
+            <near>0.1</near>
+            <far>50</far>
+          </clip>
+          <lens>
+            <intrinsics>
+              <fx>615.9603271484375</fx>
+              <fy>616.227294921875</fy>
+              <cx>419.83026123046875</cx>
+              <cy>245.1431427001953</cy>
+              <s>0</s>
+            </intrinsics>
+          </lens>
+        </camera>
+      </sensor>
+      <sensor name="depth" type="depth_camera">
+        <pose>0 0.0175 0.0125 0 0 0</pose>
+        <update_rate>6</update_rate>
+        <always_on>0</always_on>
+        <camera>
+          <horizontal_fov>2.0944</horizontal_fov>
+          <image>
+            <width>848</width>
+            <height>480</height>
+            <format>R_FLOAT32</format>
+          </image>
+          <clip>
+            <near>0.5</near>
+            <far>20.0</far>
+          </clip>
+          <lens>
+            <intrinsics>
+              <fx>421.61578369140625</fx>
+              <fy>421.61578369140625</fy>
+              <cx>422.2854309082031</cx>
+              <cy>236.57237243652344</cy>
+              <s>0</s>
+            </intrinsics>
+          </lens>
+        </camera>
+      </sensor>
+    </link>
+
+    <joint name="camera_front_joint" type="fixed">
+      <child>camera_front</child>
+      <parent>base_link</parent>
+    </joint>
+
+    <!-- Horizontal fins -->
+    <link name="horizontal_fins">
+      <pose>1.05 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 1.57 0 0.5</pose>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>0.0007924568755</ixx>
+          <ixy>-0.0000000002674</ixy>
+          <ixz>0.0003978158176</ixz>
+          <iyy>0.0010546736475</iyy>
+          <iyz>-0.0000000006729</iyz>
+          <izz>0.0002633558262</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="horizontal_fins_collision">
+        <geometry>
+          <box>
+            <size>0.1 0.1 0.02</size>
+          </box>
+        </geometry>
+      </collision> 
+
+      <visual name= "horizontal_fins_visual">
+        <pose>-1.05 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>meshes/tethys.dae</uri>
+            <submesh>
+              <name>Fins_Horizontal</name>
+              <center>false</center>
+            </submesh>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+              <albedo_map>materials/textures/Tethys_Albedo.png</albedo_map>
+              <normal_map>materials/textures/Tethys_Normal.png</normal_map>
+              <metalness_map>materials/textures/Tethys_Metalness.png</metalness_map>
+              <roughness_map>materials/textures/Tethys_Roughness.png</roughness_map>
+            </metal>
+          </pbr>
+          <script>
+            <uri>materials/scripts/</uri>
+            <uri>materials/textures/</uri>
+            <name>tethys/Tethys_Diffuse</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <!-- Vertical fins -->
+    <link name="vertical_fins">
+      <pose>1.05 0 0 0 0 0</pose>
+      <inertial>
+        <mass>0.2</mass>
+        <inertia>
+          <ixx>0.0007924568755</ixx>
+          <ixy>-0.0000000002674</ixy>
+          <ixz>0.0003978158176</ixz>
+          <iyy>0.0010546736475</iyy>
+          <iyz>-0.0000000006729</iyz>
+          <izz>0.0002633558262</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="vertical_fins_collision">
+         <geometry>
+          <box>
+            <size>0.1 0.1 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name= "vertical_fins_visual">
+        <pose>-1.05 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>meshes/tethys.dae</uri>
+            <submesh>
+              <name>Fins_vertical</name>
+              <center>false</center>
+            </submesh>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+              <albedo_map>materials/textures/Tethys_Albedo.png</albedo_map>
+              <normal_map>materials/textures/Tethys_Normal.png</normal_map>
+              <metalness_map>materials/textures/Tethys_Metalness.png</metalness_map>
+              <roughness_map>materials/textures/Tethys_Roughness.png</roughness_map>
+            </metal>
+          </pbr>
+          <script>
+            <uri>materials/scripts/</uri>
+            <uri>materials/textures/</uri>
+            <name>tethys/Tethys_Diffuse</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+
+    <!-- Propeller -->
+    <link name="propeller">
+      <pose>1.43162 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.09</mass>
+        <inertia>
+          <ixx>0.000143971303</ixx>
+          <ixy>0.000000000008</ixy>
+          <ixz>-0.000000000224</ixz>
+          <iyy>0.000140915448</iyy>
+          <iyz>-0.000025236433</iyz>
+          <izz>0.000033571862</izz>
+        </inertia>
+      </inertial>
+
+      <collision name="propeller_collision">
+        <geometry>
+          <box>
+            <size>0.03 0.1 0.03</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name= "propeller_visual">
+        <pose>-1.43162 0 0 0 0 0</pose>
+        <geometry>
+          <mesh>
+            <uri>meshes/tethys.dae</uri>
+            <submesh>
+              <name>Prop</name>
+              <center>false</center>
+            </submesh>
+          </mesh>
+        </geometry>
+        <material>
+          <diffuse>1.0 1.0 1.0</diffuse>
+          <specular>1.0 1.0 1.0</specular>
+          <pbr>
+            <metal>
+              <albedo_map>materials/textures/Tethys_Albedo.png</albedo_map>
+              <normal_map>materials/textures/Tethys_Normal.png</normal_map>
+              <metalness_map>materials/textures/Tethys_Metalness.png</metalness_map>
+              <roughness_map>materials/textures/Tethys_Roughness.png</roughness_map>
+            </metal>
+          </pbr>
+          <script>
+            <uri>materials/scripts/</uri>
+            <uri>materials/textures/</uri>
+            <name>tethys/Tethys_Diffuse</name>
+          </script>
+        </material>
+      </visual>
+
+    </link>
+
+    <!-- Joints -->
+    <joint name="horizontal_fins_joint" type="revolute">
+      <pose>0 0 0 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>horizontal_fins</child>
+      <axis>
+        <xyz>0 1 0</xyz>
+        <limit>
+          <lower>-0.261799</lower>
+          <upper>0.261799</upper>
+          <effort>-1</effort>
+          <velocity>-1</velocity>
+        </limit>
+      </axis>
+    </joint>
+
+    <joint name="vertical_fins_joint" type="revolute">
+      <pose>0 0 0 0 0 0</pose>
+      <parent>base_link</parent>
+      <child>vertical_fins</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-0.261799</lower>
+          <upper>0.261799</upper>
+          <effort>-1</effort>
+          <velocity>-1</velocity>
+        </limit>
+      </axis>
+    </joint>
+
+    <joint name="propeller_joint" type="revolute">
+    <child>propeller</child>
+      <parent>base_link</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>-1e+12</lower>
+          <upper>1e+12</upper>
+          <effort>-1</effort>
+          <velocity>-1</velocity>
+        </limit>
+      </axis>
+    </joint>
+
+    <!-- Joint controllers -->
+    <plugin
+        filename="ignition-gazebo-thruster-system"
+        name="ignition::gazebo::systems::Thruster">
+        <joint_name>propeller_joint</joint_name>
+        <thrust_coefficient>0.00004422</thrust_coefficient>
+        <fluid_density>1000</fluid_density>
+        <propeller_diameter>0.1</propeller_diameter>
+        <odom_publish_frequency>20</odom_publish_frequency>
+        <frame_id>odom</frame_id>
+        <child_frame_id>base_link</child_frame_id>
+    </plugin>
+
+    <plugin
+      filename="ignition-gazebo-joint-position-controller-system"
+      name="ignition::gazebo::systems::JointPositionController">
+      <joint_name>horizontal_fins_joint</joint_name>
+      <p_gain>0.1</p_gain>
+      <odom_publish_frequency>20</odom_publish_frequency>
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_link</child_frame_id>
+    </plugin>
+
+    <plugin
+      filename="ignition-gazebo-joint-position-controller-system"
+      name="ignition::gazebo::systems::JointPositionController">
+      <joint_name>vertical_fins_joint</joint_name>
+      <p_gain>0.1</p_gain>
+      <odom_publish_frequency>20</odom_publish_frequency>
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_link</child_frame_id>
+    </plugin>
+
+    <!-- Lift and drag -->
+
+    <!-- Vertical fin -->
+    <plugin
+      filename="ignition-gazebo-lift-drag-system"
+      name="ignition::gazebo::systems::LiftDrag">
+      <air_density>1000</air_density>
+      <cla>4.13</cla>
+      <cla_stall>-1.1</cla_stall>
+      <cda>0.2</cda>
+      <cda_stall>0.03</cda_stall>
+      <alpha_stall>0.17</alpha_stall>
+      <a0>0</a0>
+      <area>0.0244</area>
+      <upward>0 1 0</upward>
+      <forward>1 0 0</forward>
+      <link_name>vertical_fins</link_name>
+      <cp>0 0 0</cp>
+    </plugin>
+
+      <!-- Horizontal fin -->
+    <plugin
+      filename="ignition-gazebo-lift-drag-system"
+      name="ignition::gazebo::systems::LiftDrag">
+      <air_density>1000</air_density>
+      <cla>4.13</cla>
+      <cla_stall>-1.1</cla_stall>
+      <cda>0.2</cda>
+      <cda_stall>0.03</cda_stall>
+      <alpha_stall>0.17</alpha_stall>
+      <a0>0</a0>
+      <area>0.0244</area>
+      <upward>0 0 1</upward>
+      <forward>1 0 0</forward>
+      <link_name>horizontal_fins</link_name>
+      <cp>0 0 0</cp>
+    </plugin>
+
+    <!-- Control AUV -->
+
+    <!-- Forward thrust control -->
+    <plugin filename="ignition-gazebo-triggered-publisher-system"
+            name="ignition::gazebo::systems::TriggeredPublisher">
+        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">87</match> <!-- W arrow key -->
+        </input>
+        <output type="ignition.msgs.Double" topic="/model/tethys/joint/propeller_joint/cmd_thrust">
+            data: -50.0
+        </output>
+    </plugin>
+
+    <!-- Backward thrust control -->
+    <plugin filename="ignition-gazebo-triggered-publisher-system"
+            name="ignition::gazebo::systems::TriggeredPublisher">
+        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">88</match> <!-- X key -->
+        </input>
+        <output type="ignition.msgs.Double" topic="/model/tethys/joint/propeller_joint/cmd_thrust">
+            data: 50.0
+        </output>
+    </plugin>
+
+    <!-- Stop thrust control -->
+    <plugin filename="ignition-gazebo-triggered-publisher-system"
+            name="ignition::gazebo::systems::TriggeredPublisher">
+        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">83</match> <!-- S key -->
+        </input>
+        <output type="ignition.msgs.Double" topic="/model/tethys/joint/propeller_joint/cmd_thrust">
+            data: 0.0
+        </output>
+    </plugin>
+
+
+    <!-- Turn left (vertical fin) -->
+    <plugin filename="ignition-gazebo-triggered-publisher-system"
+            name="ignition::gazebo::systems::TriggeredPublisher">
+        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">68</match> <!-- D key -->
+        </input>
+        <output type="ignition.msgs.Double" topic="/model/tethys/joint/vertical_fins_joint/0/cmd_pos">
+            data: 0.2
+        </output>
+    </plugin>
+
+    <!-- Turn right (vertical fin) -->
+    <plugin filename="ignition-gazebo-triggered-publisher-system"
+            name="ignition::gazebo::systems::TriggeredPublisher">
+        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">65</match> <!-- A key -->
+        </input>
+        <output type="ignition.msgs.Double" topic="/model/tethys/joint/vertical_fins_joint/0/cmd_pos">
+            data: -0.2
+        </output>
+    </plugin>
+
+    <!-- Dive (horizontal fin down) -->
+    <plugin filename="ignition-gazebo-triggered-publisher-system"
+            name="ignition::gazebo::systems::TriggeredPublisher">
+        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">16777237</match> <!-- Down arrow key -->
+        </input>
+        <output type="ignition.msgs.Double" topic="/model/tethys/joint/horizontal_fins_joint/0/cmd_pos">
+            data: 0.2
+        </output>
+    </plugin>
+
+    <!-- Ascend (horizontal fin up) -->
+    <plugin filename="ignition-gazebo-triggered-publisher-system"
+            name="ignition::gazebo::systems::TriggeredPublisher">
+        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">16777235</match> <!-- Up arrow key -->
+        </input>
+        <output type="ignition.msgs.Double" topic="/model/tethys/joint/horizontal_fins_joint/0/cmd_pos">
+            data: -0.2
+        </output>
+    </plugin>
+
+    <!-- Center fins -->
+    <plugin filename="ignition-gazebo-triggered-publisher-system"
+            name="ignition::gazebo::systems::TriggeredPublisher">
+        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">67</match> <!-- C key (center) -->
+        </input>
+        <output type="ignition.msgs.Double" topic="/model/tethys/joint/horizontal_fins_joint/0/cmd_pos">
+            data: 0.0
+        </output>
+    </plugin>
+
+    <plugin filename="ignition-gazebo-triggered-publisher-system"
+            name="ignition::gazebo::systems::TriggeredPublisher">
+        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
+            <match field="data">82</match> <!-- R key (reset) -->
+        </input>
+        <output type="ignition.msgs.Double" topic="/model/tethys/joint/vertical_fins_joint/0/cmd_pos">
+            data: 0.0
+        </output>
+    </plugin>
+
+    <!-- GROUND ODOMETRY POSITION STATE PUBLISHER (FAKE LOCALIZATION) -->
+    <plugin filename="ignition-gazebo-pose-publisher-system" name="ignition::gazebo::systems::PosePublisher">
+      <publish_link_pose>true</publish_link_pose>
+      <publish_collision_pose>false</publish_collision_pose>
+      <publish_visual_pose>false</publish_visual_pose>
+      <publish_sensor_pose>false</publish_sensor_pose>
+      <publish_nested_model_pose>true</publish_nested_model_pose>
+      <update_frequency>20</update_frequency>
+    </plugin>
+
+    <plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher">
+      <joint_name>horizontal_fins_joint</joint_name>
+      <joint_name>vertical_fins_joint</joint_name>
+      <joint_name>propeller_joint</joint_name>
+    </plugin>
+
+  </model>
+</sdf>
