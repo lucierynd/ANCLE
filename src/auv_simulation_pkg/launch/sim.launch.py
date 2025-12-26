@@ -98,7 +98,7 @@ def generate_launch_description():
             ),
             (
                 "/world/world_demo/model/tethys/link/camera_front/sensor/depth/depth_image/points",
-                "scan_3D",
+                "camera_front/depth/scan_3D",
             ),
             ("/model/tethys/odometry", "odom"),
             ("/model/tethys/cmd_vel", "cmd_vel"),
