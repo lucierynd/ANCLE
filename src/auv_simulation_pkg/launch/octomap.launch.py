@@ -17,10 +17,10 @@ def generate_launch_description():
                 'base_frame_id': 'base_link',
 
                 # Map resolution (meters)
-                'resolution': 0.15,
+                'resolution': 0.5,
 
                 # Sensor model
-                'sensor_model/max_range': 10.0,
+                'sensor_model/max_range': 20.0,
 
                 # Filtering
                 'pointcloud_min_z': -2.0,

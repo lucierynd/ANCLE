@@ -14,6 +14,11 @@ RUN apt-get update && apt-get install -y \
     ros-humble-navigation2 \
     ros-humble-nav2-bringup \
     ros-humble-ros-gz \
+    ros-humble-octomap \
+    ros-humble-octomap-msgs \
+    ros-humble-octomap-ros \
+    ros-humble-octomap-rviz-plugins \
+    ros-humble-octomap-server \
     curl \
     nano \
     gnupg \
@@ -53,14 +58,15 @@ RUN git clone https://github.com/MAPIRlab/rf2o_laser_odometry.git
 # ANCLE custom package setup
 # =============================================================
 
+WORKDIR /ros2_ws/src
 COPY src/ancle_pkg /ros2_ws/src/ancle_pkg 
 
 # =============================================================
-# Gazebo garden simulation setup 
+# AUV simulation setup 
 # =============================================================
 
 # To add once simulation is ready
-# COPY src/Gazebo-Garden-Simulation /ros2_ws/src/Gazebo-Garden-Simulation
+# COPY src/auv_simulation_pkg /ros2_ws/src/auv_simulation_pkg
 
 # =============================================================
 # Final setup
