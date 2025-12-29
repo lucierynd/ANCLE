@@ -70,7 +70,7 @@ def generate_launch_description():
             "/world/world_demo/model/tethys/link/camera_front/sensor/depth/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo",
             "/world/world_demo/model/tethys/link/camera_front/sensor/depth/depth_image@sensor_msgs/msg/Image[gz.msgs.Image",
             "/world/world_demo/model/tethys/link/camera_front/sensor/depth/depth_image/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked",
-            "/world/world_demo/model/tethys/link/imu_link/sensor/imu/imu@sensor_msgs/msg/Imu[gz.msgs.IMU",
+            "/world/world_demo/model/tethys/link/altimeter_link/sensor/altimeter/altimeter@ros_gz_interfaces/msg/Altimeter[gz.msgs.Altimeter",
             "/model/tethys/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry",
             "/model/tethys/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
             "/world/world_demo/model/tethys/link/scan_omni/sensor/scan_omni/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan",
@@ -105,6 +105,10 @@ def generate_launch_description():
             (
                 "/world/world_demo/model/tethys/link/imu_link/sensor/imu/imu",
                 "imu/data",
+            ),
+            (
+                "/world/world_demo/model/tethys/link/altimeter_link/sensor/altimeter/altimeter",
+                "altimeter/data",
             ),
             (
                 "/world/world_demo/model/tethys/link/scan_omni/sensor/scan_omni/scan",
