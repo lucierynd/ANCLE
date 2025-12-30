@@ -4,10 +4,14 @@
   <name>auv_simulation_pkg</name>
   <version>0.0.0</version>
   <description>Auv Simulation ROS2 humble Gazebo Garden package</description>
-  <maintainer email="ngwk@utar.edu.my">Danny Ng</maintainer>
+  <maintainer email="luciernd@mit.edu">Lucie Reynaud</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
 
   <depend>geometry_msgs</depend>
   <depend>tf2</depend>

@@ -70,6 +70,7 @@ def generate_launch_description():
             "/world/auv_world/model/tethys/link/camera_front/sensor/depth/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo",
             "/world/auv_world/model/tethys/link/camera_front/sensor/depth/depth_image@sensor_msgs/msg/Image[gz.msgs.Image",
             "/world/auv_world/model/tethys/link/camera_front/sensor/depth/depth_image/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked",
+            "/world/auv_world/model/tethys/link/imu_link/sensor/imu/imu@sensor_msgs/msg/Imu[gz.msgs.IMU",
             "/world/auv_world/model/tethys/link/altimeter_link/sensor/altimeter/altimeter@ros_gz_interfaces/msg/Altimeter[gz.msgs.Altimeter",
             "/model/tethys/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry",
             "/model/tethys/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
