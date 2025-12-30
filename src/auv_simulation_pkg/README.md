@@ -1,67 +1,72 @@
-# Gazebo Garden Simulation Example
+# AUV simulation package
 
-This is a simple example of using gazebo garden for ROS simulation.
+Simulation of an AUV in an underwater environment. 
 
-## Pre-requisites
+## Docker stuff:
 
-- Install Gazebo Garden from [https://gazebosim.org/docs/garden/install_ubuntu](https://gazebosim.org/docs/garden/install_ubuntu)
-- Install Slam Toolbox [https://github.com/SteveMacenski/slam_toolbox](https://github.com/SteveMacenski/slam_toolbox)
-- Install Nav2 [https://navigation.ros.org/getting_started/index.html#installation](https://navigation.ros.org/getting_started/index.html#installation)
-
-## Running the simulation
-
-- Clone this repository into your workspace
-- Build the workspace
-- Source the workspace
-
-## Running Basic Simulation
-
-Run the following command to launch the simulation
+Build the docker container from the ANCLE main folder:
 
 ```bash
-ros2 launch gazebo_garden_simulation_example sim.launch.py 
+docker build -f tools/Docker/dockerfile_ros_humble_auv_simulation/Dockerfile  -t ancle_auv_simulation_humble_image .
 ```
 
-Wait until the bridge is launch and in another terminal, run the following command to launch teleop
+Run the container: 
 
 ```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
+docker run -it --rm\
+  --net=host \
+  --env="DISPLAY=$DISPLAY" \
+  --env="QT_X11_NO_MITSHM=1" \
+  --env="XAUTHORITY=$XAUTH" \
+  --volume="/tmp/.X11-unix:/tmp/. X11-unix:rw" \
+  --runtime nvidia \
+  --gpus all \
+  -v /home/robotuna/ANCLE/src/auv_simulation_pkg:/ros2_ws/src/auv_simulation_pkg/ \
+  --name ancle_auv_simulation_humble_container \
+  ancle_auv_simulation_humble_image \
+  bash
 ```
 
-## Running SLAM Simulation
-
-Run the following command to launch the simulation
+Run the same container in a new window:
 
 ```bash
-ros2 launch gazebo_garden_simulation_example sim.slam.launch.py
+docker exec -it ancle_auv_simulation_humble_container bash
 ```
 
-Wait until the bridge is launch and in another terminal start SLAM
+### Package set up (while developing):
+
+Build and source the simulation package:
 
 ```bash
-ros2 launch gazebo_garden_simulation_example slam.launch.py
+colcon build --symlink-install
 ```
-
-Wait until the map is built and in another terminal, run the following command to launch teleop to start mapping
 
 ```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
+source install/setup.bash
 ```
 
-## Running Navigation Simulation
-
-Run the following command to launch the simulation
+## Launch simulation only
 
 ```bash
-ros2 launch gazebo_garden_simulation_example sim.nav.launch.py
+ros2 launch auv_simulation_pkg sim.launch.py 
 ```
 
-Wait until the bridge is launch and in another terminal start Navigation
+## Launch SLAM
 
 ```bash
-ros2 launch gazebo_garden_simulation_example nav.launch.py
+ros2 launch auv_simulation_pkg sim.slam.launch.py 
 ```
 
-## Other Information
+```bash
+ros2 launch auv_simulation_pkg slam.launch.py
+```
 
-Modified version of [tugbot](https://app.gazebosim.org/MovAi/fuel/models/Tugbot) is used in the simulation. The modified version is available in the `models` folder.
+## Launch SLAM + Octomap
+
+```bash
+ros2 launch auv_simulation_pkg sim.octomap.slam.launch.py 
+```
+
+```bash
+ros2 launch auv_simulation_pkg octomap.slam.launch.py 
+```
