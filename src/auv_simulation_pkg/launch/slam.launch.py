@@ -13,7 +13,7 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory('slam_toolbox'),'launch','online_async_launch.py')]),
                 launch_arguments={'slam_params_file': os.path.join(
-                    get_package_share_directory('ancle_pkg'), 'config', 'slam_toolbox_rplidar_config.yaml')}.items()
+                    pkg_path, 'params', 'slam_toolbox_params.yaml')}.items()
     )
 
     return LaunchDescription([slam_toolbox])
