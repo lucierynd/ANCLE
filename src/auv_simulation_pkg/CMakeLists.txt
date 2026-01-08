@@ -21,6 +21,7 @@ endif()
 
 install(PROGRAMS
   src/auv_monitor_node.py
+  src/altimeter_to_odom.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

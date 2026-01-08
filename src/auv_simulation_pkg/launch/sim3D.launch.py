@@ -173,6 +173,14 @@ def generate_launch_description():
             output="screen"
     )
 
+    altimeter_odom = Node(
+            package="auv_simulation_pkg",
+            executable="altimeter_to_odom.py",
+            name="altimeter_odom",
+            parameters=[{"use_sim_time": True}],
+            output="screen"
+    )
+
     # EKF Node
     ekf = Node(
             package="robot_localization",
@@ -203,6 +211,7 @@ def generate_launch_description():
             ),
             rf2o,
             kiss_icp,
+            altimeter_odom,
             ekf
         ]
     )
