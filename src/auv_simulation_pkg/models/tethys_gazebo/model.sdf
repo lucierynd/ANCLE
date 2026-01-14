@@ -237,7 +237,7 @@
     <link name="camera_front">
       <pose>-0.80 0.10 0 0 0 3.14</pose>
       <inertial>
-        <pose>0 0 0 0 0 0</pose>
+        <pose>0.8 -0.10 0 0 0 -3.14</pose>
         <mass>0.00001</mass>
         <inertia>
           <ixx>0.0000000016875</ixx>

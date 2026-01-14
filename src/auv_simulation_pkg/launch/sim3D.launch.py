@@ -18,7 +18,7 @@ def generate_static_tf_publisher_node(parentFrame, childFrame):
     return Node(
         package="tf2_ros",
         executable="static_transform_publisher",
-        name=f"static_tf_publisher_{parentFrame}",
+        name=f"static_tf_publisher_{parentFrame}_to_{childFrame.replace('/', '_')}",
         arguments=["0", "0", "0", "0", "0", "0", parentFrame, childFrame],
         parameters=[{"use_sim_time": True}],
     )

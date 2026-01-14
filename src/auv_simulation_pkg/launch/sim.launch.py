@@ -18,7 +18,7 @@ def generate_static_tf_publisher_node(parentFrame, childFrame):
     return Node(
         package="tf2_ros",
         executable="static_transform_publisher",
-        name=f"static_tf_publisher_{parentFrame}",
+        name=f"static_tf_publisher_{parentFrame}_to_{childFrame.replace('/', '_')}",
         arguments=["0", "0", "0", "0", "0", "0", parentFrame, childFrame],
         parameters=[{"use_sim_time": True}],
     )
@@ -136,23 +136,33 @@ def generate_launch_description():
         ],
     )
 
-    # RF2O Node - Lidar only odometry
-    # rf2o = IncludeLaunchDescription(
-    #             PythonLaunchDescriptionSource([os.path.join(
-    #                 get_package_share_directory('rf2o_laser_odometry'),'launch','rf2o_laser_odometry.launch.py')])
-    # )
-
-    # IMU + lidar odometry without TF publishing
     # RF2O Node - Lidar only odometry without TF publishing
-    rf2o = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('auv_simulation_pkg'),'launch','rf2o_no_tf_launch.py')])
+    rf2o = Node(
+            package="rf2o_laser_odometry",
+            executable="rf2o_laser_odometry_node",
+            name="rf2o_laser_odometry",
+            output="screen",
+            arguments=["--ros-args", "--log-level", "rf2o_laser_odometry:=error"],
+            parameters=[
+                {"laser_scan_topic": "/scan"},
+                {"odom_topic": "/odom_rf2o"},
+                {"publish_tf": False},      
+                {"base_frame_id": "base_link"},
+                {"odom_frame_id": "odom"},
+                {"init_pose_from_topic": ""},
+                {"freq": 20.0},
+                {"use_sim_time": True}
+            ]
     )
 
     # EKF Node
-    ekf = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory('auv_simulation_pkg'),'launch','ekf_launch.py')])
+    ekf = Node(
+            package="robot_localization",
+            executable="ekf_node",
+            name="ekf_filter_node",
+            output="screen",
+            parameters=[os.path.join(
+                get_package_share_directory("auv_simulation_pkg"),"params","ekf_config.yaml")]
     )
 
     return LaunchDescription(
