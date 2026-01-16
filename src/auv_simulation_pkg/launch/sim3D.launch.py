@@ -146,7 +146,7 @@ def generate_launch_description():
             arguments=["--ros-args", "--log-level", "rf2o_laser_odometry:=error"],
             parameters=[
                 {"laser_scan_topic": "/scan"},
-                {"odom_topic": "/odom_rf2o"},
+                {"odom_topic": "/odom_rf2o_raw"},
                 {"publish_tf": False},      
                 {"base_frame_id": "base_link"},
                 {"odom_frame_id": "odom"},
@@ -154,6 +154,14 @@ def generate_launch_description():
                 {"freq": 20.0},
                 {"use_sim_time": True}
             ]
+    )
+
+    rf2o_covariance_gate = Node(
+            package="auv_simulation_pkg",
+            executable="rf2o_covariance_gate.py",
+            name="rf2o_covariance_gate",
+            parameters=[{"use_sim_time": True}],
+            output="screen"
     )
 
     # KISS-ICP Odometry
@@ -210,6 +218,7 @@ def generate_launch_description():
                 "imu_link", "tethys/imu_link/imu"
             ),
             rf2o,
+            rf2o_covariance_gate,
             kiss_icp,
             altimeter_odom,
             ekf

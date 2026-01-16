@@ -22,6 +22,7 @@ endif()
 install(PROGRAMS
   src/auv_monitor_node.py
   src/altimeter_to_odom.py
+  src/rf2o_covariance_gate.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
