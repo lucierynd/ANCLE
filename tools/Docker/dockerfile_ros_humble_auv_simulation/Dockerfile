@@ -31,6 +31,10 @@ RUN apt-get update && apt-get install -y \
 # Install colcon
 RUN pip install -U colcon-common-extensions
 
+# upgrade cmake 
+RUN pip install cmake==3.24
+RUN export PATH=/usr/local/bin:$PATH
+
 # =============================================================
 # Setup slam_toolbox
 # =============================================================
@@ -53,6 +57,12 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && rosdep update && rosdep i
 # =============================================================
 
 RUN git clone https://github.com/MAPIRlab/rf2o_laser_odometry.git
+
+# =============================================================
+# Kiss-ICP SETUP
+# =============================================================
+
+RUN git clone https://github.com/PRBonn/kiss-icp.git
 
 # =============================================================
 # ANCLE custom package setup
