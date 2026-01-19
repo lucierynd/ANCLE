@@ -1,6 +1,6 @@
 import os
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument, TimerAction
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
@@ -9,12 +9,6 @@ from launch.conditions import IfCondition
 
 
 def generate_launch_description():
-
-    # Define package names
-    custom_pkg='ancle_pkg' 
-    lidar_pkg='rplidar_ros'
-    tf_publisher_pkg='tf2_ros'
-    slam_pkg='slam_toolbox'
 
     # Declare the launch argument for RViz
     declare_rviz_arg = DeclareLaunchArgument(
@@ -26,12 +20,19 @@ def generate_launch_description():
     # Start RPlidar
     rplidar = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(custom_pkg),'launch','rplidar_launch.py')])
+                    get_package_share_directory('ancle_pkg'),'launch','rplidar.launch.py')])
     )
+
+    # Start cyglidar
+    cyglidar = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('ancle_pkg'),'launch','cyglidar.launch.py')])
+    )
+
 
     # transform from lidar to base_link
     transform_lidar_base_link = Node(
-        package=tf_publisher_pkg,
+        package='tf2_ros',
         executable='static_transform_publisher',
         name='transform_lidar_base_link',
         arguments=['0.0', '0.0', '0.1', '3.14', '0.0', '0.0', 'base_link', 'laser']
@@ -39,7 +40,7 @@ def generate_launch_description():
 
     # transform from imu to base_link
     transform_imu_base_link = Node(
-        package=tf_publisher_pkg,
+        package='tf2_ros',
         executable='static_transform_publisher',
         name='transform_imu_base_link',
         arguments=['0.0', '0.0', '0.0', '3.14', '0.0', '0.0', 'base_link', 'imu_link']
@@ -47,7 +48,7 @@ def generate_launch_description():
 
     # IMU python publisher 
     imu_publisher = Node(
-        package=custom_pkg,
+        package='ancle_pkg',
         executable='imu_publisher.py',
         name='imu_publisher'
     )
@@ -68,8 +69,25 @@ def generate_launch_description():
                 {"odom_frame_id": "odom"},
                 {"init_pose_from_topic": ""},
                 {"freq": 20.0},
-                {"use_sim_time": True}
+                {"use_sim_time": False}
             ]
+    )
+
+    # KISS-ICP Odometry
+    kiss_icp = Node(
+            package="kiss_icp",
+            executable="kiss_icp_node",
+            name="kiss_icp",
+            remappings=[
+            ("pointcloud_topic", "/scan_3D"),
+            ],
+            parameters=[
+                {"publish_odom_tf": False},   
+                {"lidar_odom_frame": "odom"},
+                {"base_frame": "base_link"},
+                {"use_sim_time": False}
+            ],
+            output="screen"
     )
 
     # EKF Node
@@ -79,15 +97,7 @@ def generate_launch_description():
             name="ekf_filter_node",
             output="screen",
             parameters=[os.path.join(
-                get_package_share_directory(custom_pkg),"params","ekf_config.yaml")]
-    )
-
-    # SLAM Toolbox Node
-    slam_toolbox = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(slam_pkg),'launch','online_async_launch.py')]),
-                launch_arguments={'slam_params_file': os.path.join(
-                    get_package_share_directory(custom_pkg), 'params', 'slam_toolbox_rplidar_config.yaml')}.items()
+                get_package_share_directory('ancle_pkg'),"params","ekf_config.yaml")]
     )
 
     # RViz Node 
@@ -96,22 +106,39 @@ def generate_launch_description():
         executable='rviz2',
         name='rviz2',
         arguments=['-d', os.path.join(
-            get_package_share_directory(custom_pkg), 'rviz', 'rviz_slam_tool_box_config.rviz')],
+            get_package_share_directory('ancle_pkg'), 'rviz', 'rviz_octomap_slam_config.rviz')],
         output='screen',
         condition=IfCondition(LaunchConfiguration('use_rviz'))
     )
 
+    slam_toolbox = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('slam_toolbox'),'launch','online_async_launch.py')]),
+                launch_arguments={'slam_params_file': os.path.join(
+                    get_package_share_directory('ancle_pkg'), 'params', 'slam_toolbox_rplidar_config.yaml')}.items()
+    )
 
+    octomap = IncludeLaunchDescription(
+                PythonLaunchDescriptionSource([os.path.join(
+                    get_package_share_directory('ancle_pkg'), 'launch', 'octomap.launch.py')]),
+    )
 
-    # Launch them all!
+    # Wait that everything is settled before launching slam and octomap
+    delayedNodes = TimerAction(
+        period=10.0,
+        actions=[slam_toolbox, octomap],
+    )
+
     return LaunchDescription([
         declare_rviz_arg,
         rplidar,
+        cyglidar,
         transform_lidar_base_link,
         transform_imu_base_link,
         imu_publisher,
         rf2o,
+        kiss_icp,
         ekf,
-        slam_toolbox,
-        rviz
+        rviz,
+        delayedNodes
     ])
