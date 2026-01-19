@@ -69,7 +69,7 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory(slam_pkg),'launch','online_async_launch.py')]),
                 launch_arguments={'slam_params_file': os.path.join(
-                    get_package_share_directory(custom_pkg), 'config', 'slam_toolbox_rplidar_config.yaml')}.items()
+                    get_package_share_directory(custom_pkg), 'params', 'slam_toolbox_rplidar_config.yaml')}.items()
     )
 
     # Start cyglidar
@@ -85,7 +85,7 @@ def generate_launch_description():
     #             PythonLaunchDescriptionSource([os.path.join(
     #                 get_package_share_directory(nav2_pkg),'launch','navigation_launch.py')]),
     #             launch_arguments={'params_file': os.path.join(
-    #                 get_package_share_directory(custom_pkg), 'config', 'nav2_config.yaml')}.items()
+    #                 get_package_share_directory(custom_pkg), 'params', 'nav2_config.yaml')}.items()
     # )
 
     # RViz node 

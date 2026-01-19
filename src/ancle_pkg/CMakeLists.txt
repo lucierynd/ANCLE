@@ -23,9 +23,9 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-# Install launch/config/src folders
+# Install launch/params/src folders
 install(
-  DIRECTORY config launch src rviz
+  DIRECTORY params launch src rviz
   DESTINATION share/${PROJECT_NAME}
 )
 

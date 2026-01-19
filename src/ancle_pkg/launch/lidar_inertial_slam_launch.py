@@ -26,7 +26,7 @@ def generate_launch_description():
     # Start RPlidar
     rplidar = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(lidar_pkg),'launch','rplidar_c1_launch.py')])
+                    get_package_share_directory(custom_pkg),'launch','rplidar_launch.py')])
     )
 
     # transform from lidar to base_link
@@ -54,15 +54,32 @@ def generate_launch_description():
 
 
     # RF2O Node
-    rf2o = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(custom_pkg),'launch','rf2o_no_tf_launch.py')])
+    rf2o = Node(
+            package="rf2o_laser_odometry",
+            executable="rf2o_laser_odometry_node",
+            name="rf2o_laser_odometry",
+            output="screen",
+            arguments=["--ros-args", "--log-level", "rf2o_laser_odometry:=error"],
+            parameters=[
+                {"laser_scan_topic": "/scan"},
+                {"odom_topic": "/odom_rf2o"},
+                {"publish_tf": False},      
+                {"base_frame_id": "base_link"},
+                {"odom_frame_id": "odom"},
+                {"init_pose_from_topic": ""},
+                {"freq": 20.0},
+                {"use_sim_time": True}
+            ]
     )
 
     # EKF Node
-    ekf = IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([os.path.join(
-                    get_package_share_directory(custom_pkg),'launch','ekf_launch.py')])
+    ekf = Node(
+            package="robot_localization",
+            executable="ekf_node",
+            name="ekf_filter_node",
+            output="screen",
+            parameters=[os.path.join(
+                get_package_share_directory(custom_pkg),"params","ekf_config.yaml")]
     )
 
     # SLAM Toolbox Node
@@ -70,7 +87,7 @@ def generate_launch_description():
                 PythonLaunchDescriptionSource([os.path.join(
                     get_package_share_directory(slam_pkg),'launch','online_async_launch.py')]),
                 launch_arguments={'slam_params_file': os.path.join(
-                    get_package_share_directory(custom_pkg), 'config', 'slam_toolbox_rplidar_config.yaml')}.items()
+                    get_package_share_directory(custom_pkg), 'params', 'slam_toolbox_rplidar_config.yaml')}.items()
     )
 
     # RViz Node 

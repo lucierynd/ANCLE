@@ -13,6 +13,12 @@ RUN apt-get update && apt-get install -y \
     ros-humble-robot-localization \
     ros-humble-navigation2 \
     ros-humble-nav2-bringup \
+    ros-humble-ros-gz \
+    ros-humble-octomap \
+    ros-humble-octomap-msgs \
+    ros-humble-octomap-ros \
+    ros-humble-octomap-rviz-plugins \
+    ros-humble-octomap-server \
     curl \
     nano \
     gnupg \
@@ -24,6 +30,10 @@ RUN apt-get update && apt-get install -y \
 
 # Install colcon
 RUN pip install -U colcon-common-extensions
+
+# upgrade cmake 
+RUN pip install cmake==3.24
+RUN export PATH=/usr/local/bin:$PATH
 
 # =============================================================
 # Setup slam_toolbox
@@ -60,10 +70,16 @@ RUN git clone https://github.com/CygLiDAR-ROS/cyglidar_d2.git
 RUN git clone https://github.com/MAPIRlab/rf2o_laser_odometry.git
 
 # =============================================================
+# Kiss-ICP SETUP
+# =============================================================
+
+RUN git clone https://github.com/PRBonn/kiss-icp.git
+
+# =============================================================
 # ANCLE custom package setup
 # =============================================================
 
-COPY src/ancle_pkg /ros2_ws/src/ancle_pkg 
+# COPY src/ancle_pkg /ros2_ws/src/ancle_pkg 
 
 # =============================================================
 # Final setup
