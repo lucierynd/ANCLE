@@ -18,7 +18,7 @@ def generate_launch_description():
         description = "frequency Ch. [0 to 15]")
 
     duration_mode_arg = DeclareLaunchArgument(
-        "duration_mode", default_value = TextSubstitution(text="0"),
+        "duration_mode", default_value = TextSubstitution(text="1"),
         description = "pulse mode [0 (Auto), 1(Fixed)]")
 
     duration_value_arg = DeclareLaunchArgument(
@@ -34,7 +34,7 @@ def generate_launch_description():
         description = "3D data type [0 (DISTANCE), 1 (AMPLITUDE)]")
 
     filter_mode_arg = DeclareLaunchArgument(
-        "filter_mode", default_value = TextSubstitution(text="0"),
+        "filter_mode", default_value = TextSubstitution(text="2"),
         description = "New 3D Data Filtering [0 (None), 1 (Median Filter), 2 (Average Filter)]")
 
     edge_filter_value_arg = DeclareLaunchArgument(
@@ -66,7 +66,7 @@ def generate_launch_description():
            {"port_number": "/dev/cyglidar"},
            {"baud_rate": LaunchConfiguration("baud_rate")},
            {"frame_id": "laser_frame"},
-           {"fixed_frame": "/map"},
+           # {"fixed_frame": "/map"},
            {"run_mode": LaunchConfiguration("run_mode")},
            {"frequency_channel": LaunchConfiguration("frequency_channel")},
            {"duration_mode": LaunchConfiguration("duration_mode")},
@@ -80,11 +80,6 @@ def generate_launch_description():
            {"clahe_cliplimit": LaunchConfiguration("clahe_cliplimit")},
            {"clahe_tiles_grid_size": LaunchConfiguration("clahe_tiles_grid_size")}
         ]
-    )
-
-    tf_node = launch_ros.actions.Node(
-        package = 'tf2_ros', executable = "static_transform_publisher", name="to_laserframe",
-        arguments = ["0", "0", "0", "0", "0", "0", "base_link", "laser_frame"]
     )
 
     ld = LaunchDescription()
@@ -103,6 +98,5 @@ def generate_launch_description():
     ld.add_action(clahe_cliplimit_arg)
     ld.add_action(clahe_tiles_grid_size_arg)
     ld.add_action(lidar_node)
-    ld.add_action(tf_node)
 
     return ld

@@ -5,7 +5,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 from launch.substitutions import LaunchConfiguration
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 
 
 def generate_launch_description():
@@ -15,6 +15,12 @@ def generate_launch_description():
         'use_rviz',
         default_value='true',
         description='Whether to launch RViz'
+    )
+
+    declare_use_3d_ekf_arg = DeclareLaunchArgument(
+        'use_3d_ekf',
+        default_value='false',
+        description='Whether to use 3D ekf (2D lidar + IMU + kiss-icp/3D Lidar + static altitude publisher) vs 2D mode (2D lidar + IMU only)'
     )
 
     # Start RPlidar
@@ -30,11 +36,11 @@ def generate_launch_description():
     )
 
 
-    # transform from lidar to base_link
-    transform_lidar_base_link = Node(
+    # transform from 2d lidar to base_link
+    transform_rplidar_base_link = Node(
         package='tf2_ros',
         executable='static_transform_publisher',
-        name='transform_lidar_base_link',
+        name='transform_rplidar_base_link',
         arguments=['0.0', '0.0', '0.1', '3.14', '0.0', '0.0', 'base_link', 'laser']
     )
 
@@ -45,6 +51,15 @@ def generate_launch_description():
         name='transform_imu_base_link',
         arguments=['0.0', '0.0', '0.0', '3.14', '0.0', '0.0', 'base_link', 'imu_link']
     )
+
+    # transform from 3D lidar to base_link
+    transform_cyglidar_base_link = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='transform_cyglidar_base_link',
+        arguments=['0.0', '0.0', '0.025', '0.0', '0.0', '0.0', 'base_link', 'laser_frame']
+    )
+
 
     # IMU python publisher 
     imu_publisher = Node(
@@ -82,22 +97,45 @@ def generate_launch_description():
             ("pointcloud_topic", "/scan_3D"),
             ],
             parameters=[
-                {"publish_odom_tf": False},   
+                {"publish_odom_tf": True},   
                 {"lidar_odom_frame": "odom"},
                 {"base_frame": "base_link"},
                 {"use_sim_time": False}
             ],
-            output="screen"
+            output="screen",
+            condition=IfCondition(LaunchConfiguration('use_3d_ekf'))
     )
 
-    # EKF Node
+    # Publishes static altitude data (no pressure sensor yet)
+    static_altimeter_odom = Node(
+            package="ancle_pkg",
+            executable="static_altimeter_odom.py",
+            name="static_altimeter_odom",
+            parameters=[{"use_sim_time": True}],
+            output="screen",
+            condition=IfCondition(LaunchConfiguration('use_3d_ekf'))
+    )
+
+    # EKF Node: 2D mode, uses 2D lidar + IMU
     ekf = Node(
             package="robot_localization",
             executable="ekf_node",
             name="ekf_filter_node",
             output="screen",
             parameters=[os.path.join(
-                get_package_share_directory('ancle_pkg'),"params","ekf_config.yaml")]
+                get_package_share_directory('ancle_pkg'),"params","ekf_config.yaml")],
+            condition=UnlessCondition(LaunchConfiguration('use_3d_ekf'))
+    )
+
+    # EKF Node: 3D mode, uses 2D lidar + IMU + 3D Lidar
+    ekf_3D = Node(
+            package="robot_localization",
+            executable="ekf_node",
+            name="ekf_filter_node",
+            output="screen",
+            parameters=[os.path.join(
+                get_package_share_directory('ancle_pkg'),"params","ekf_3D_config.yaml")],
+            condition=IfCondition(LaunchConfiguration('use_3d_ekf'))
     )
 
     # RViz Node 
@@ -131,14 +169,18 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_rviz_arg,
+        declare_use_3d_ekf_arg,
         rplidar,
         cyglidar,
-        transform_lidar_base_link,
+        transform_rplidar_base_link,
         transform_imu_base_link,
+        transform_cyglidar_base_link,
         imu_publisher,
         rf2o,
         kiss_icp,
+        static_altimeter_odom,
         ekf,
+        ekf_3D,
         rviz,
         delayedNodes
     ])
