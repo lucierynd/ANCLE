@@ -6,12 +6,12 @@ kiss_icp_node:
   ros__parameters:
 
     data:
-      deskew: True
-      max_range: 20.0
+      deskew: False
+      max_range: 2.0
       min_range: 0.5
 
     mapping:
-      # voxel_size: 1.0 # <- optional, default = max_range / 100.0
+      voxel_size: 0.10 # <- optional, default = max_range / 100.0
       max_points_per_voxel: 20
 
     adaptive_threshold:

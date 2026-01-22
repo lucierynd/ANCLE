@@ -10,6 +10,13 @@ from launch.conditions import IfCondition, UnlessCondition
 
 def generate_launch_description():
 
+    # Declare the launch argument for RViz
+    declare_rviz_arg = DeclareLaunchArgument(
+        'use_rviz',
+        default_value='true',
+        description='Whether to launch RViz'
+    )
+
     # Start cyglidar
     cyglidar = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
@@ -57,10 +64,12 @@ def generate_launch_description():
         name='rviz2',
         arguments=['-d', os.path.join(
             get_package_share_directory('ancle_pkg'), 'rviz', 'rviz_test_kiss_icp_config.rviz')],
-        output='screen'
+        output='screen',
+        condition=IfCondition(LaunchConfiguration('use_rviz'))
     )
 
     return LaunchDescription([
+        declare_rviz_arg,
         cyglidar,
         transform_cyglidar_base_link,
         kiss_icp,
