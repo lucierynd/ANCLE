@@ -90,20 +90,29 @@ def generate_launch_description():
 
     # KISS-ICP Odometry
     kiss_icp = Node(
-            package="kiss_icp",
-            executable="kiss_icp_node",
-            name="kiss_icp",
-            remappings=[
+        package="kiss_icp",
+        executable="kiss_icp_node",
+        name="kiss_icp_node",
+        output="screen",
+        remappings=[
             ("pointcloud_topic", "/scan_3D"),
-            ],
-            parameters=[
-                {"publish_odom_tf": True},   
-                {"lidar_odom_frame": "odom"},
-                {"base_frame": "base_link"},
-                {"use_sim_time": False}
-            ],
-            output="screen",
-            condition=IfCondition(LaunchConfiguration('use_3d_ekf'))
+        ],
+        parameters=[
+            {
+                # ROS node configuration
+                "base_frame": "base_link",
+                "lidar_odom_frame": "odom",
+                "publish_odom_tf": False,
+                "invert_odom_tf": False,
+                # ROS CLI arguments
+                "publish_debug_clouds": True,
+                "use_sim_time": False,
+                "position_covariance": 0.01,
+                "orientation_covariance": 0.01,
+            },
+            os.path.join(get_package_share_directory("ancle_pkg"), "params", "kiss_icp_config.yaml")
+        ],
+        condition=IfCondition(LaunchConfiguration('use_3d_ekf'))
     )
 
     # Publishes static altitude data (no pressure sensor yet)
