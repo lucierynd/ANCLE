@@ -143,7 +143,7 @@ class GroundTruthPoseNode(Node):
         
         # Generate filename with timestamp
         timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
-        filename = f'ground_truth_trajectory_{timestamp_str}.txt'
+        filename = f'/ros2_ws/src/auv_simulation_pkg/trajectories/ground_truth_trajectory_{timestamp_str}.txt'
         
         try:
             with open(filename, 'w') as f:
