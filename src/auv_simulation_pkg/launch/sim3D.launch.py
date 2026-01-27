@@ -178,8 +178,8 @@ def generate_launch_description():
                 # ROS node configuration
                 "base_frame": "base_link",
                 "lidar_odom_frame": "odom",
-                "publish_odom_tf": False,
-                "invert_odom_tf": True,
+                "publish_odom_tf": True,
+                "invert_odom_tf": False,
                 # ROS CLI arguments
                 "publish_debug_clouds": True,
                 "use_sim_time": True,
@@ -189,6 +189,21 @@ def generate_launch_description():
             os.path.join(get_package_share_directory("auv_simulation_pkg"), "params", "kiss_icp_config.yaml")
         ],
     )
+    # kiss_icp = Node(
+    #         package="kiss_icp",
+    #         executable="kiss_icp_node",
+    #         name="kiss_icp",
+    #         remappings=[
+    #         ("pointcloud_topic", "/camera_front/depth/scan_3D"),
+    #         ],
+    #         parameters=[
+    #             {"publish_odom_tf": True},   
+    #             {"lidar_odom_frame": "odom"},
+    #             {"base_frame": "base_link"},
+    #             {"use_sim_time": True}
+    #         ],
+    #         output="screen"
+    # )
 
     altimeter_odom = Node(
             package="auv_simulation_pkg",
@@ -226,11 +241,11 @@ def generate_launch_description():
             generate_static_tf_publisher_node(
                 "imu_link", "tethys/imu_link/imu"
             ),
-            rf2o,
-            rf2o_covariance_gate,
+            # rf2o,
+            # rf2o_covariance_gate,
             kiss_icp,
-            altimeter_odom,
-            ekf
+            # altimeter_odom,
+            # ekf
         ]
     )
    

@@ -188,7 +188,7 @@
         /ros2_ws/src/auv_simulation_pkg/models/tethys_gazebo
       </uri>
       <name>tethys</name>
-      <pose>10 0 2 0 0 0</pose>
+      <pose>10 0 2 0 0 3.1415</pose>
     </include>
 
   </world>

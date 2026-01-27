@@ -17,7 +17,7 @@ def generate_launch_description():
         [
             IncludeLaunchDescription(
                 PythonLaunchDescriptionSource(
-                    os.path.join(pkg_path, "launch", "sim3D.launch.py"),
+                    os.path.join(pkg_path, "launch", "sim.launch.py"),
                 ),
                 launch_arguments={
                     "rviz_config": os.path.join(pkg_path, "rviz", "octomap_slam.rviz"),
