@@ -23,7 +23,6 @@ def generate_static_tf_publisher_node(parentFrame, childFrame):
         parameters=[{"use_sim_time": True}],
     )
 
-
 def generate_launch_description():
     pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
     pkg_path = get_package_share_directory(package_name)
@@ -155,6 +154,32 @@ def generate_launch_description():
             ]
     )
 
+    # KISS-ICP Odometry for 2D lidar (need to run scan_to_pcl_humble from tools/python/src use it)
+    kiss_icp = Node(
+        package="kiss_icp",
+        executable="kiss_icp_node",
+        name="kiss_icp_node",
+        output="screen",
+        remappings=[
+            ("pointcloud_topic", "/lidar2D/points"),
+        ],
+        parameters=[
+            {
+                # ROS node configuration
+                "base_frame": "base_link",
+                "lidar_odom_frame": "odom",
+                "publish_odom_tf": True,
+                "invert_odom_tf": True,
+                # ROS CLI arguments
+                "publish_debug_clouds": True,
+                "use_sim_time": True,
+                "position_covariance": 0.01,
+                "orientation_covariance": 0.01,
+            },
+            os.path.join(get_package_share_directory("auv_simulation_pkg"), "params", "kiss_icp_config_2D.yaml")
+        ],
+    )
+
     # EKF Node
     ekf = Node(
             package="robot_localization",
@@ -184,6 +209,7 @@ def generate_launch_description():
                 "imu_link", "tethys/imu_link/imu"
             ),
             rf2o,
+            #kiss_icp,
             ekf
         ]
     )

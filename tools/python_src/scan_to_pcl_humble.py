@@ -16,7 +16,7 @@ class LaserScanToPointCloud(Node):
 
         self.pc_pub = self.create_publisher(
             PointCloud2,
-            '/lidar/points',
+            '/lidar2D/points',
             10
         )
 
@@ -46,7 +46,7 @@ class LaserScanToPointCloud(Node):
 
         if num > 0:
             avg_z = sum_z / num
-            self.get_logger().info(f"Avg Z = {avg_z:.4f}")
+            #self.get_logger().info(f"Avg Z = {avg_z:.4f}")
 
         # Convert to list
         point_list = list(pc2.read_points(pc2_msg, skip_nans=True))
@@ -54,7 +54,7 @@ class LaserScanToPointCloud(Node):
         if len(point_list) > 0:
             mid_index = len(point_list) // 2
             mid_point = point_list[mid_index]
-            self.get_logger().info(f"Mid point X = {mid_point[0]:.4f}")
+            #self.get_logger().info(f"Mid point X = {mid_point[0]:.4f}")
 
 
 def main(args=None):
