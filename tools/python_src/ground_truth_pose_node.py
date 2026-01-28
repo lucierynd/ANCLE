@@ -35,9 +35,6 @@ class GroundTruthPoseNode(Node):
             10
         )
         
-        # Setup signal handler for graceful shutdown
-        signal.signal(signal.SIGINT, self.signal_handler)
-        
         self.get_logger().info('Ground Truth Pose Node started')
         self.get_logger().info('Waiting for initial pose...')
     
@@ -158,13 +155,6 @@ class GroundTruthPoseNode(Node):
             self.get_logger().info(f'Trajectory saved to {filename} ({len(self.trajectory_data)} poses)')
         except Exception as e:
             self.get_logger().error(f'Failed to save trajectory: {str(e)}')
-    
-    def signal_handler(self, sig, frame):
-        """Handle shutdown signal"""
-        self.get_logger().info('Shutdown signal received, saving trajectory...')
-        self.save_trajectory()
-        sys.exit(0)
-
 
 def main(args=None):
     rclpy.init(args=args)
@@ -174,10 +164,11 @@ def main(args=None):
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        pass
+        node.get_logger().info('Shutting down Ground Truth Pose Node')
     finally:
-        node.get_logger().info('Shutting down, saving trajectory...')
+        node.get_logger().info('Saving trajectory...')
         node.save_trajectory()
+        node.get_logger().info('All good, bye !')
         node.destroy_node()
         rclpy.shutdown()
 
