@@ -78,7 +78,7 @@ class GroundTruthPoseNode(Node):
         ])
         
         # Calculate relative position (world frame)
-        relative_position = - (current_position - self.initial_position)
+        relative_position = current_position - self.initial_position
         
         # Calculate relative orientation
         # Convert quaternions to rotation objects
@@ -98,7 +98,7 @@ class GroundTruthPoseNode(Node):
         
         # Relative rotation: R_relative = R_initial^-1 * R_current
         relative_rot = initial_rot.inv() * current_rot
-        relative_quat = - relative_rot.as_quat()  # [x, y, z, w]
+        relative_quat = relative_rot.as_quat()  # [x, y, z, w]
         
         # transform position to initial frame
         # relative_position_body = initial_rot.inv().apply(relative_position)
