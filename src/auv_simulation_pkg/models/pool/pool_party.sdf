@@ -25,7 +25,6 @@
     </plugin>
 
     <gui fullscreen="0">
-
       <!-- 3D scene -->
       <plugin filename="GzScene3D" name="3D View">
         <ignition-gui>
@@ -37,7 +36,7 @@
         <scene>scene</scene>
         <ambient_light>0.4 0.4 0.4</ambient_light>
         <background_color>0.0 0.2 0.6</background_color>
-        <camera_pose>22 -5 4 0 0.6 1.83</camera_pose>
+        <camera_pose>17 -5 4 0 0.4 0.90</camera_pose>
       </plugin>
 
       <!-- World control -->
