@@ -29,6 +29,7 @@
       </collision>
 
       <visual name="base_link_visual">
+        <pose>0 0 0 0 0 3.14159</pose>
         <geometry>
           <mesh>
             <uri>meshes/tethys.dae</uri>
@@ -194,7 +195,7 @@
       </visual>
       <!-- Main cylinder of Ouster/Velodyne 3D Lidar -->
       <visual name="base_link_velodyne_visual_scan">
-        <pose>0 0 -0.035 0 0 0</pose>
+        <pose>0 0 -0.035 0 0 3.14159</pose>
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
@@ -235,9 +236,9 @@
 
     <!-- Camera (front of the AUV) -->
     <link name="camera_front">
-      <pose>-0.80 0.10 0 0 0 3.14</pose>
+      <pose>0.80 -0.10 0 0 0 0</pose>
       <inertial>
-        <pose>0.8 -0.10 0 0 0 -3.14</pose>
+        <pose>-0.8 0.10 0 0 0 0</pose>
         <mass>0.00001</mass>
         <inertia>
           <ixx>0.0000000016875</ixx>
@@ -249,7 +250,7 @@
         </inertia>
       </inertial>
       <visual name="camera_visual">
-        <pose>0 0 0 0 0 0</pose>
+        <pose>0 0 0 0 0 3.14159</pose>
         <geometry>
           <box>
             <size>0.05 0.03 0.03</size>
@@ -316,7 +317,7 @@
 
     <!-- Horizontal fins -->
     <link name="horizontal_fins">
-      <pose>1.05 0 0 0 0 0</pose>
+      <pose>-1.05 0 0 0 0 0</pose>
       <inertial>
         <pose>0 0 0 1.57 0 0.5</pose>
         <mass>0.2</mass>
@@ -339,7 +340,7 @@
       </collision> 
 
       <visual name= "horizontal_fins_visual">
-        <pose>-1.05 0 0 0 0 0</pose>
+        <pose>1.05 0 0 0 0 3.14159</pose>
         <geometry>
           <mesh>
             <uri>meshes/tethys.dae</uri>
@@ -371,7 +372,7 @@
 
     <!-- Vertical fins -->
     <link name="vertical_fins">
-      <pose>1.05 0 0 0 0 0</pose>
+      <pose>-1.05 0 0 0 0 0</pose>
       <inertial>
         <mass>0.2</mass>
         <inertia>
@@ -393,7 +394,7 @@
       </collision>
 
       <visual name= "vertical_fins_visual">
-        <pose>-1.05 0 0 0 0 0</pose>
+        <pose>1.05 0 0 0 0 3.14159</pose>
         <geometry>
           <mesh>
             <uri>meshes/tethys.dae</uri>
@@ -425,7 +426,7 @@
 
     <!-- Propeller -->
     <link name="propeller">
-      <pose>1.43162 0 0 0 0 0</pose>
+      <pose>-1.43162 0 0 0 0 0</pose>
       <inertial>
         <pose>0 0 0 0 0 0</pose>
         <mass>0.09</mass>
@@ -448,7 +449,7 @@
       </collision>
 
       <visual name= "propeller_visual">
-        <pose>-1.43162 0 0 0 0 0</pose>
+        <pose>1.43162 0 0 0 0 3.1419</pose>
         <geometry>
           <mesh>
             <uri>meshes/tethys.dae</uri>
@@ -604,7 +605,7 @@
             <match field="data">87</match> <!-- W arrow key -->
         </input>
         <output type="ignition.msgs.Double" topic="/model/tethys/joint/propeller_joint/cmd_thrust">
-            data: -50.0
+            data: 50.0
         </output>
     </plugin>
 
@@ -615,7 +616,7 @@
             <match field="data">88</match> <!-- X key -->
         </input>
         <output type="ignition.msgs.Double" topic="/model/tethys/joint/propeller_joint/cmd_thrust">
-            data: 50.0
+            data: -50.0
         </output>
     </plugin>
 
