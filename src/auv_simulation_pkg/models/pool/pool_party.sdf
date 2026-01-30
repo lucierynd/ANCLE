@@ -36,7 +36,7 @@
         <scene>scene</scene>
         <ambient_light>0.4 0.4 0.4</ambient_light>
         <background_color>0.0 0.2 0.6</background_color>
-        <camera_pose>17 -5 4 0 0.4 0.90</camera_pose>
+        <camera_pose>-153 7 4 0 0.4 0.90</camera_pose>
       </plugin>
 
       <!-- World control -->
@@ -187,7 +187,7 @@
         /ros2_ws/src/auv_simulation_pkg/models/tethys_gazebo
       </uri>
       <name>tethys</name>
-      <pose>20 0 2 0 0 0</pose>
+      <pose>-150 10 2 0 0 0</pose>
     </include>
 
   </world>
