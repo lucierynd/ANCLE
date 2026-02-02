@@ -65,42 +65,18 @@ def generate_launch_description():
         name="tethys_bridge",
         parameters=[{"use_sim_time": True}],
         arguments=[
-            "/world/auv_world/model/tethys/link/camera_front/sensor/color/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo",
-            "/world/auv_world/model/tethys/link/camera_front/sensor/color/image@sensor_msgs/msg/Image[gz.msgs.Image",
-            "/world/auv_world/model/tethys/link/camera_front/sensor/depth/camera_info@sensor_msgs/msg/CameraInfo[gz.msgs.CameraInfo",
-            "/world/auv_world/model/tethys/link/camera_front/sensor/depth/depth_image@sensor_msgs/msg/Image[gz.msgs.Image",
-            "/world/auv_world/model/tethys/link/camera_front/sensor/depth/depth_image/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked",
             "/world/auv_world/model/tethys/link/imu_link/sensor/imu/imu@sensor_msgs/msg/Imu[gz.msgs.IMU",
             "/world/auv_world/model/tethys/link/altimeter_link/sensor/altimeter/altimeter@ros_gz_interfaces/msg/Altimeter[gz.msgs.Altimeter",
             "/model/tethys/odometry@nav_msgs/msg/Odometry[gz.msgs.Odometry",
             "/model/tethys/cmd_vel@geometry_msgs/msg/Twist]gz.msgs.Twist",
             "/world/auv_world/model/tethys/link/scan_omni/sensor/scan_omni/scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan",
+            "/world/auv_world/model/tethys/link/forward_lidar/sensor/solid_state_lidar/scan/points@sensor_msgs/msg/PointCloud2[gz.msgs.PointCloudPacked",
             "/world/auv_world/model/tethys/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model",
             "/model/tethys/tf@tf2_msgs/msg/TFMessage[gz.msgs.Pose_V",
             "/model/tethys/pose@geometry_msgs/msg/TransformStamped[gz.msgs.Pose",
             "/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock"
         ],
         remappings=[
-            (
-                "/world/auv_world/model/tethys/link/camera_front/sensor/color/camera_info",
-                "camera_front/camera_info",
-            ),
-            (
-                "/world/auv_world/model/tethys/link/camera_front/sensor/color/image",
-                "camera_front/image",
-            ),
-            (
-                "/world/auv_world/model/tethys/link/camera_front/sensor/depth/camera_info",
-                "camera_front/depth/camera_info",
-            ),
-            (
-                "/world/auv_world/model/tethys/link/camera_front/sensor/depth/depth_image",
-                "camera_front/depth/image",
-            ),
-            (
-                "/world/auv_world/model/tethys/link/camera_front/sensor/depth/depth_image/points",
-                "camera_front/depth/scan_3D",
-            ),
             ("/model/tethys/odometry", "odom"),
             ("/model/tethys/cmd_vel", "cmd_vel"),
             (
@@ -114,6 +90,10 @@ def generate_launch_description():
             (
                 "/world/auv_world/model/tethys/link/scan_omni/sensor/scan_omni/scan",
                 "scan",
+            ),
+            (
+                "/world/auv_world/model/tethys/link/forward_lidar/sensor/solid_state_lidar/scan/points",
+                "scan_3D",
             ),
             ("/world/auv_world/model/tethys/joint_state", "joint_states"),
         ],
@@ -171,7 +151,7 @@ def generate_launch_description():
         name="kiss_icp_node",
         output="screen",
         remappings=[
-            ("pointcloud_topic", "/camera_front/depth/scan_3D"),
+            ("pointcloud_topic", "/scan_3D"),
         ],
         parameters=[
             {
@@ -186,24 +166,9 @@ def generate_launch_description():
                 "position_covariance": 0.01,
                 "orientation_covariance": 0.01,
             },
-            os.path.join(get_package_share_directory("auv_simulation_pkg"), "params", "kiss_icp_config.yaml")
+            #os.path.join(get_package_share_directory("auv_simulation_pkg"), "params", "kiss_icp_config.yaml")
         ],
     )
-    # kiss_icp = Node(
-    #         package="kiss_icp",
-    #         executable="kiss_icp_node",
-    #         name="kiss_icp",
-    #         remappings=[
-    #         ("pointcloud_topic", "/camera_front/depth/scan_3D"),
-    #         ],
-    #         parameters=[
-    #             {"publish_odom_tf": True},   
-    #             {"lidar_odom_frame": "odom"},
-    #             {"base_frame": "base_link"},
-    #             {"use_sim_time": True}
-    #         ],
-    #         output="screen"
-    # )
 
     altimeter_odom = Node(
             package="auv_simulation_pkg",
@@ -233,19 +198,16 @@ def generate_launch_description():
                 "scan_omni", "tethys/scan_omni/scan_omni"
             ),
             generate_static_tf_publisher_node(
-                "camera_front", "tethys/camera_front/color"
-            ),
-            generate_static_tf_publisher_node(
-                "camera_front", "tethys/camera_front/depth"
+                "forward_lidar", "tethys/forward_lidar/solid_state_lidar"
             ),
             generate_static_tf_publisher_node(
                 "imu_link", "tethys/imu_link/imu"
             ),
-            # rf2o,
-            # rf2o_covariance_gate,
+            #rf2o,
+            #rf2o_covariance_gate,
             kiss_icp,
-            # altimeter_odom,
-            # ekf
+            #altimeter_odom,
+            #ekf
         ]
     )
    

@@ -32,7 +32,7 @@ def generate_launch_description():
                 'publish_pointcloud': False,
             }],
             remappings=[
-                ('cloud_in', 'camera_front/depth/scan_3D')
+                ('cloud_in', 'scan_3D')
             ]
         )
 

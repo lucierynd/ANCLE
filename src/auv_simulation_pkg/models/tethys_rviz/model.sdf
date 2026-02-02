@@ -233,22 +233,22 @@
       <parent>base_link</parent>
     </joint>
 
-    <!-- Camera (front of the AUV) -->
-    <link name="camera_front">
+    <!-- Solid state lidar (front of the AUV) -->
+    <link name="forward_lidar">
       <pose>0.80 -0.10 0 0 0 0</pose>
       <inertial>
         <pose>-0.8 0.10 0 0 0 0</pose>
-        <mass>0.00001</mass>
+        <mass>0.0000000000001</mass>
         <inertia>
-          <ixx>0.0000000016875</ixx>
+          <ixx>0.000000000000000016875</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.000000000001</iyy>
+          <iyy>0.00000000000000000001</iyy>
           <iyz>0</iyz>
-          <izz>0.0000000016875</izz>
+          <izz>0.000000000000000016875</izz>
         </inertia>
       </inertial>
-      <visual name="camera_visual">
+      <visual name="forward_lidar_visual">
         <pose>0 0 0 0 0 3.14159</pose>
         <geometry>
           <box>
@@ -256,61 +256,41 @@
           </box>
         </geometry>
       </visual>
-      <sensor name="color" type="camera">
-        <pose>0 0.0325 0.0125 0 0 0</pose>
-        <update_rate>6</update_rate>
-        <always_on>0</always_on>
-        <camera>
-          <horizontal_fov>1.20427718</horizontal_fov>
-          <image>
-            <width>848</width>
-            <height>480</height>
-          </image>
-          <clip>
-            <near>0.1</near>
-            <far>50</far>
-          </clip>
-          <lens>
-            <intrinsics>
-              <fx>615.9603271484375</fx>
-              <fy>616.227294921875</fy>
-              <cx>419.83026123046875</cx>
-              <cy>245.1431427001953</cy>
-              <s>0</s>
-            </intrinsics>
-          </lens>
-        </camera>
-      </sensor>
-      <sensor name="depth" type="depth_camera">
-        <pose>0 0.0175 0.0125 0 0 0</pose>
-        <update_rate>6</update_rate>
-        <always_on>0</always_on>
-        <camera>
-          <horizontal_fov>2.0944</horizontal_fov>
-          <image>
-            <width>848</width>
-            <height>480</height>
-            <format>R_FLOAT32</format>
-          </image>
-          <clip>
-            <near>0.5</near>
-            <far>20.0</far>
-          </clip>
-          <lens>
-            <intrinsics>
-              <fx>421.61578369140625</fx>
-              <fy>421.61578369140625</fy>
-              <cx>422.2854309082031</cx>
-              <cy>236.57237243652344</cy>
-              <s>0</s>
-            </intrinsics>
-          </lens>
-        </camera>
+      <sensor name="solid_state_lidar" type="gpu_lidar">
+        <update_rate>10</update_rate>
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>120</samples>
+              <resolution>1</resolution>
+              <min_angle>-1.0472</min_angle>  <!-- -60 degrees -->
+              <max_angle>1.0472</max_angle>   <!-- +60 degrees -->
+            </horizontal>
+            <vertical>
+              <samples>32</samples>
+              <resolution>1</resolution>
+              <min_angle>-0.2618</min_angle>  <!-- -15 degrees -->
+              <max_angle>0.2618</max_angle>   <!-- +15 degrees -->
+            </vertical>
+          </scan>
+          <range>
+            <min>0.5</min>
+            <max>20.0</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
       </sensor>
     </link>
 
-    <joint name="camera_front_joint" type="fixed">
-      <child>camera_front</child>
+    <joint name="forward_lidar_joint" type="fixed">
+      <child>forward_lidar</child>
       <parent>base_link</parent>
     </joint>
 
