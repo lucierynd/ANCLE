@@ -10,7 +10,7 @@ def generate_launch_description():
         description = "baud rate value [0:(3,000,000), 1:(921,600), 2:(115,200), 3:(57,600)]")
 
     run_mode_arg = DeclareLaunchArgument(
-        "run_mode", default_value = TextSubstitution(text="1"),
+        "run_mode", default_value = TextSubstitution(text="2"),
         description = "version type [0(2D), 1(3D), 2(2D/3D)]")
 
     frequency_channel_arg = DeclareLaunchArgument(
@@ -18,7 +18,7 @@ def generate_launch_description():
         description = "frequency Ch. [0 to 15]")
 
     duration_mode_arg = DeclareLaunchArgument(
-        "duration_mode", default_value = TextSubstitution(text="1"),
+        "duration_mode", default_value = TextSubstitution(text="0"),
         description = "pulse mode [0 (Auto), 1(Fixed)]")
 
     duration_value_arg = DeclareLaunchArgument(
@@ -26,15 +26,15 @@ def generate_launch_description():
         description = "pulse duration [0 to 10000] ")
 
     color_mode_arg = DeclareLaunchArgument(
-        "color_mode", default_value = TextSubstitution(text="1"),
+        "color_mode", default_value = TextSubstitution(text="0"),
         description = "color mode [0 (HUE), 1 (RGB), 2 (GRAY)]")
 
     data_type_3d_arg = DeclareLaunchArgument(
-        "data_type_3d", default_value = TextSubstitution(text="1"),
+        "data_type_3d", default_value = TextSubstitution(text="0"),
         description = "3D data type [0 (DISTANCE), 1 (AMPLITUDE)]")
 
     filter_mode_arg = DeclareLaunchArgument(
-        "filter_mode", default_value = TextSubstitution(text="2"),
+        "filter_mode", default_value = TextSubstitution(text="0"),
         description = "New 3D Data Filtering [0 (None), 1 (Median Filter), 2 (Average Filter)]")
 
     edge_filter_value_arg = DeclareLaunchArgument(
@@ -63,10 +63,10 @@ def generate_launch_description():
         executable = 'cyglidar_d2_publisher',
         output = 'screen',
         parameters=[
-           {"port_number": "/dev/cyglidar"},
+           {"port_number": "/dev/ttyUSB0"},
            {"baud_rate": LaunchConfiguration("baud_rate")},
            {"frame_id": "laser_frame"},
-           # {"fixed_frame": "/map"},
+           {"fixed_frame": "/map"},
            {"run_mode": LaunchConfiguration("run_mode")},
            {"frequency_channel": LaunchConfiguration("frequency_channel")},
            {"duration_mode": LaunchConfiguration("duration_mode")},
@@ -80,6 +80,11 @@ def generate_launch_description():
            {"clahe_cliplimit": LaunchConfiguration("clahe_cliplimit")},
            {"clahe_tiles_grid_size": LaunchConfiguration("clahe_tiles_grid_size")}
         ]
+    )
+
+    tf_node = launch_ros.actions.Node(
+        package = 'tf2_ros', executable = "static_transform_publisher", name="to_laserframe",
+        arguments = ["0", "0", "0", "0", "0", "0", "map", "laser_frame"]
     )
 
     ld = LaunchDescription()
@@ -98,5 +103,6 @@ def generate_launch_description():
     ld.add_action(clahe_cliplimit_arg)
     ld.add_action(clahe_tiles_grid_size_arg)
     ld.add_action(lidar_node)
+    ld.add_action(tf_node)
 
     return ld
