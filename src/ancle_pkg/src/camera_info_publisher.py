@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# Perception Engine Inc. 2022
 
 import rclpy
 import yaml
@@ -26,7 +25,7 @@ class PeCalibrationPublisher(Node):
         self.__camera_info_msg = self.__parse_yaml(self._filename)
         self.info_publisher_ = self.create_publisher(CameraInfo, 'camera_info', 10)
 
-        # Create QoS profile matching the camera publisher
+        # Create QoS profile matching the camera publisher 
         qos_profile = QoSProfile(
             reliability=ReliabilityPolicy.BEST_EFFORT,
             history=HistoryPolicy.KEEP_LAST,
@@ -38,13 +37,13 @@ class PeCalibrationPublisher(Node):
                 Image,
                 self._input_topic,
                 self.image_callback,
-                qos_profile)  # Use the QoS profile here
+                qos_profile)  
         else:
             self.image_sub_ = self.create_subscription(
                 CompressedImage,
                 self._input_topic+'/compressed',
                 self.image_callback,
-                qos_profile)  # Use the QoS profile here
+                qos_profile)  
 
         self.get_logger().info('Loaded file: {}'.format(self._filename))
         self.counter = 0

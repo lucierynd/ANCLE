@@ -18,6 +18,7 @@ D2Node::D2Node() : Node("D2_NODE")
 
     topic_3d->initPublisher(this->create_publisher<sensor_msgs::msg::Image>      ("depth_image", qos_3d),
                             this->create_publisher<sensor_msgs::msg::Image>      ("amplitude_image", qos_3d),
+                            this->create_publisher<sensor_msgs::msg::Image>      ("depth_image_raw", qos_3d),
                             this->create_publisher<sensor_msgs::msg::PointCloud2>("scan_3D",    qos_3d));
 
     status_topic->initPublisher(this->create_publisher<std_msgs::msg::Float32>("sensor_temperature", 5));
@@ -121,7 +122,8 @@ void D2Node::initConfiguration()
     status_topic->assignDeviceStatus();
     topic_2d->assignLaserScan(frame_id);
     topic_2d->assignPCL2D(frame_id);
-    topic_3d->assignImageDepth(frame_id);
+    // topic_3d->assignImageDepth(frame_id);
+    topic_3d->assignImageDepthRaw(frame_id);
     topic_3d->assignImageAmplitude(frame_id);
     topic_3d->assignPCL3D(frame_id);
 
@@ -244,7 +246,8 @@ void D2Node::runPublish()
 
         topic_3d->checkAmplitudeStatus(enable_clahe, clahe_cliplimit, clahe_tiles_grid_size, amplitude_buffer_3d);
         topic_3d->publishAmplitudeFlatImage(start_time_scan_3d, distance_buffer_3d);
-        topic_3d->publishDepthFlatImage(start_time_scan_3d, distance_buffer_3d);
+        topic_3d->publishDepthRawImage(start_time_scan_3d, distance_buffer_3d);
+        // topic_3d->publishDepthFlatImage(start_time_scan_3d, distance_buffer_3d);
         topic_3d->publishDepthPointCloud3D(start_time_scan_3d, distance_buffer_3d);
 
         status_topic->publishDeviceStatus();

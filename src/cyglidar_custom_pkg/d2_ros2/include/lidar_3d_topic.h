@@ -21,14 +21,16 @@ class Lidar3dTopic
         Lidar3dTopic();
         virtual ~Lidar3dTopic();
 
-        void initPublisher(rclcpp::Publisher<Image>::SharedPtr publisher_image_depth, rclcpp::Publisher<Image>::SharedPtr publisher_image_amplitude, rclcpp::Publisher<PointCloud2>::SharedPtr publisher_point_3d);
+        void initPublisher(rclcpp::Publisher<Image>::SharedPtr publisher_image_depth, rclcpp::Publisher<Image>::SharedPtr publisher_image_amplitude, rclcpp::Publisher<Image>::SharedPtr publisher_image_depth_raw, rclcpp::Publisher<PointCloud2>::SharedPtr publisher_point_3d);
 
         void assignImageDepth(const std::string& frame_id);
         void assignImageAmplitude(const std::string& frame_id);
+        void assignImageDepthRaw(const std::string& frame_id);
         void assignPCL3D(const std::string& frame_id);
 
         void publishDepthFlatImage(rclcpp::Time scan_start_time, uint16_t* distance_buffer_3d);
         void publishAmplitudeFlatImage(rclcpp::Time scan_start_time, uint16_t* distance_buffer_3d);
+        void publishDepthRawImage(rclcpp::Time scan_start_time, uint16_t* distance_buffer_3d);
         void publishDepthPointCloud3D(rclcpp::Time scan_start_time, uint16_t* distance_buffer_3d);
         void publishAmplitudePointCloud3D(rclcpp::Time scan_start_time, uint16_t* distance_buffer_3d);
 
@@ -43,10 +45,12 @@ class Lidar3dTopic
 
         rclcpp::Publisher<Image>::SharedPtr       _publisher_image_depth;
         rclcpp::Publisher<Image>::SharedPtr       _publisher_image_amplitude;
+        rclcpp::Publisher<Image>::SharedPtr       _publisher_image_depth_raw;
         rclcpp::Publisher<PointCloud2>::SharedPtr _publisher_point_3d;
 
         std::shared_ptr<Image>       _message_image_depth;
         std::shared_ptr<Image>       _message_image_amplitude;
+        std::shared_ptr<Image>       _message_image_depth_raw;
         std::shared_ptr<PointCloud2> _message_point_cloud_3d;
         std::shared_ptr<pcl_XYZRGBA> _pcl_3d;
 

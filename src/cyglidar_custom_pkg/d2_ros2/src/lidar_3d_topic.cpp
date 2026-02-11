@@ -6,6 +6,7 @@ Lidar3dTopic::Lidar3dTopic()
     _cyg_opencv = new ColorEncodedDepthAmplitude();
     _message_point_cloud_3d = std::make_shared<PointCloud2>();
 	_message_image_depth = std::make_shared<Image>();
+	_message_image_depth_raw = std::make_shared<Image>();
     _message_image_amplitude = std::make_shared<Image>();
 }
 
@@ -18,11 +19,12 @@ Lidar3dTopic::~Lidar3dTopic()
 	_cyg_opencv = nullptr;
 }
 
-void Lidar3dTopic::initPublisher(rclcpp::Publisher<Image>::SharedPtr publisher_image_depth, rclcpp::Publisher<Image>::SharedPtr publisher_image_amplitude, rclcpp::Publisher<PointCloud2>::SharedPtr publisher_point_3d)
+void Lidar3dTopic::initPublisher(rclcpp::Publisher<Image>::SharedPtr publisher_image_depth, rclcpp::Publisher<Image>::SharedPtr publisher_image_amplitude, rclcpp::Publisher<Image>::SharedPtr publisher_image_depth_raw, rclcpp::Publisher<PointCloud2>::SharedPtr publisher_point_3d)
 {
 
     _publisher_image_depth = publisher_image_depth;
 	_publisher_image_amplitude = publisher_image_amplitude;
+	_publisher_image_depth_raw = publisher_image_depth_raw;
     _publisher_point_3d = publisher_point_3d;
 }
 
@@ -59,6 +61,25 @@ void Lidar3dTopic::assignImageAmplitude(const std::string& frame_id)
     _message_image_amplitude->data.resize(_message_image_amplitude->height * _message_image_amplitude->step);
 }
 
+void Lidar3dTopic::assignImageDepthRaw(const std::string& frame_id)
+{
+    _message_image_depth_raw->header.frame_id = frame_id;
+    _message_image_depth_raw->width           = D2_Const::IMAGE_WIDTH;
+    _message_image_depth_raw->height          = D2_Const::IMAGE_HEIGHT;
+    _message_image_depth_raw->encoding        = sensor_msgs::image_encodings::TYPE_16UC1; 
+    _message_image_depth_raw->step            = _message_image_depth_raw->width * sizeof(uint16_t);
+    _message_image_depth_raw->is_bigendian    = false;
+    _message_image_depth_raw->data.resize(_message_image_depth_raw->height * _message_image_depth_raw->step);
+}
+
+void Lidar3dTopic::publishDepthRawImage(rclcpp::Time scan_start_time, uint16_t* distance_buffer_3d)
+{
+    _message_image_depth_raw->header.stamp = scan_start_time;
+    memcpy(_message_image_depth_raw->data.data(), distance_buffer_3d, 
+           _message_image_depth_raw->height * _message_image_depth_raw->width * sizeof(uint16_t));
+    
+    _publisher_image_depth_raw->publish(*_message_image_depth_raw);
+}
 
 void Lidar3dTopic::publishDepthFlatImage(rclcpp::Time scan_start_time, uint16_t* distance_buffer_3d)
 {
