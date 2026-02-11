@@ -34,6 +34,7 @@ install(
   PROGRAMS
     src/imu_publisher.py
     src/static_altimeter_odom.py
+    src/camera_info_publisher.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
