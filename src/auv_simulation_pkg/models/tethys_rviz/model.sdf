@@ -59,15 +59,6 @@
     </link>
 
     <!-- Sensors -->
-
-    <plugin
-      filename="ignition-gazebo-imu-system"
-      name="ignition::gazebo::systems::Imu">
-    </plugin>
-    <plugin
-      filename="ignition-gazebo-altimeter-system"
-      name="ignition::gazebo::systems::Altimeter">
-    </plugin>
     
     <!-- imu (centered) -->
     <link name="imu_link">
@@ -84,10 +75,6 @@
           <izz>0.0000000016875</izz>
         </inertia>
       </inertial>
-      <sensor name="imu" type="imu">
-        <update_rate>30</update_rate>
-        <visualize>false</visualize>
-      </sensor>
     </link>
     
     <joint name="imu_link_joint" type="fixed">
@@ -110,10 +97,6 @@
           <izz>0.0000000016875</izz>
         </inertia>
       </inertial>
-      <sensor name="altimeter" type="altimeter">
-        <update_rate>30</update_rate>
-        <visualize>false</visualize>
-      </sensor>
     </link>
     
     <joint name="altimeter_link_joint" type="fixed">
@@ -202,30 +185,6 @@
           </mesh>
         </geometry>
       </visual>
-      <sensor name="scan_omni" type="gpu_lidar">
-        <update_rate>10</update_rate>
-        <lidar>
-          <scan>
-            <horizontal>
-              <samples>900</samples>
-              <resolution>1</resolution>
-              <min_angle>-3.141592654</min_angle>
-              <max_angle>3.141592654</max_angle>
-            </horizontal>
-            <vertical>
-              <samples>16</samples>
-              <resolution>1</resolution>
-              <min_angle>-0.261799388</min_angle>
-              <max_angle>0.261799388</max_angle>
-            </vertical>
-          </scan>
-          <range>
-            <min>0.5</min>
-            <max>100.0</max>
-            <resolution>0.015</resolution>
-          </range>
-        </lidar>
-      </sensor>
     </link>
 
     <joint name="scan_omni_joint" type="fixed">
@@ -256,37 +215,6 @@
           </box>
         </geometry>
       </visual>
-      <sensor name="solid_state_lidar" type="gpu_lidar">
-        <update_rate>10</update_rate>
-        <always_on>true</always_on>
-        <visualize>false</visualize>
-        <lidar>
-          <scan>
-            <horizontal>
-              <samples>120</samples>
-              <resolution>1</resolution>
-              <min_angle>-1.0472</min_angle>  <!-- -60 degrees -->
-              <max_angle>1.0472</max_angle>   <!-- +60 degrees -->
-            </horizontal>
-            <vertical>
-              <samples>32</samples>
-              <resolution>1</resolution>
-              <min_angle>-0.2618</min_angle>  <!-- -15 degrees -->
-              <max_angle>0.2618</max_angle>   <!-- +15 degrees -->
-            </vertical>
-          </scan>
-          <range>
-            <min>0.5</min>
-            <max>20.0</max>
-            <resolution>0.01</resolution>
-          </range>
-          <noise>
-            <type>gaussian</type>
-            <mean>0.0</mean>
-            <stddev>0.01</stddev>
-          </noise>
-        </lidar>
-      </sensor>
     </link>
 
     <joint name="forward_lidar_joint" type="fixed">
@@ -503,194 +431,6 @@
         </limit>
       </axis>
     </joint>
-
-    <!-- Joint controllers -->
-    <plugin
-        filename="ignition-gazebo-thruster-system"
-        name="ignition::gazebo::systems::Thruster">
-        <joint_name>propeller_joint</joint_name>
-        <thrust_coefficient>0.00004422</thrust_coefficient>
-        <fluid_density>1000</fluid_density>
-        <propeller_diameter>0.1</propeller_diameter>
-        <odom_publish_frequency>20</odom_publish_frequency>
-        <frame_id>odom</frame_id>
-        <child_frame_id>base_link</child_frame_id>
-    </plugin>
-
-    <plugin
-      filename="ignition-gazebo-joint-position-controller-system"
-      name="ignition::gazebo::systems::JointPositionController">
-      <joint_name>horizontal_fins_joint</joint_name>
-      <p_gain>0.1</p_gain>
-      <odom_publish_frequency>20</odom_publish_frequency>
-      <frame_id>odom</frame_id>
-      <child_frame_id>base_link</child_frame_id>
-    </plugin>
-
-    <plugin
-      filename="ignition-gazebo-joint-position-controller-system"
-      name="ignition::gazebo::systems::JointPositionController">
-      <joint_name>vertical_fins_joint</joint_name>
-      <p_gain>0.1</p_gain>
-      <odom_publish_frequency>20</odom_publish_frequency>
-      <frame_id>odom</frame_id>
-      <child_frame_id>base_link</child_frame_id>
-    </plugin>
-
-    <!-- Lift and drag -->
-
-    <!-- Vertical fin -->
-    <plugin
-      filename="ignition-gazebo-lift-drag-system"
-      name="ignition::gazebo::systems::LiftDrag">
-      <air_density>1000</air_density>
-      <cla>4.13</cla>
-      <cla_stall>-1.1</cla_stall>
-      <cda>0.2</cda>
-      <cda_stall>0.03</cda_stall>
-      <alpha_stall>0.17</alpha_stall>
-      <a0>0</a0>
-      <area>0.0244</area>
-      <upward>0 1 0</upward>
-      <forward>1 0 0</forward>
-      <link_name>vertical_fins</link_name>
-      <cp>0 0 0</cp>
-    </plugin>
-
-      <!-- Horizontal fin -->
-    <plugin
-      filename="ignition-gazebo-lift-drag-system"
-      name="ignition::gazebo::systems::LiftDrag">
-      <air_density>1000</air_density>
-      <cla>4.13</cla>
-      <cla_stall>-1.1</cla_stall>
-      <cda>0.2</cda>
-      <cda_stall>0.03</cda_stall>
-      <alpha_stall>0.17</alpha_stall>
-      <a0>0</a0>
-      <area>0.0244</area>
-      <upward>0 0 1</upward>
-      <forward>1 0 0</forward>
-      <link_name>horizontal_fins</link_name>
-      <cp>0 0 0</cp>
-    </plugin>
-
-    <!-- Control AUV -->
-
-    <!-- Forward thrust control -->
-    <plugin filename="ignition-gazebo-triggered-publisher-system"
-            name="ignition::gazebo::systems::TriggeredPublisher">
-        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
-            <match field="data">87</match> <!-- W arrow key -->
-        </input>
-        <output type="ignition.msgs.Double" topic="/model/tethys/joint/propeller_joint/cmd_thrust">
-            data: -50.0
-        </output>
-    </plugin>
-
-    <!-- Backward thrust control -->
-    <plugin filename="ignition-gazebo-triggered-publisher-system"
-            name="ignition::gazebo::systems::TriggeredPublisher">
-        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
-            <match field="data">88</match> <!-- X key -->
-        </input>
-        <output type="ignition.msgs.Double" topic="/model/tethys/joint/propeller_joint/cmd_thrust">
-            data: 50.0
-        </output>
-    </plugin>
-
-    <!-- Stop thrust control -->
-    <plugin filename="ignition-gazebo-triggered-publisher-system"
-            name="ignition::gazebo::systems::TriggeredPublisher">
-        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
-            <match field="data">83</match> <!-- S key -->
-        </input>
-        <output type="ignition.msgs.Double" topic="/model/tethys/joint/propeller_joint/cmd_thrust">
-            data: 0.0
-        </output>
-    </plugin>
-
-
-    <!-- Turn left (vertical fin) -->
-    <plugin filename="ignition-gazebo-triggered-publisher-system"
-            name="ignition::gazebo::systems::TriggeredPublisher">
-        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
-            <match field="data">68</match> <!-- D key -->
-        </input>
-        <output type="ignition.msgs.Double" topic="/model/tethys/joint/vertical_fins_joint/0/cmd_pos">
-            data: 0.2
-        </output>
-    </plugin>
-
-    <!-- Turn right (vertical fin) -->
-    <plugin filename="ignition-gazebo-triggered-publisher-system"
-            name="ignition::gazebo::systems::TriggeredPublisher">
-        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
-            <match field="data">65</match> <!-- A key -->
-        </input>
-        <output type="ignition.msgs.Double" topic="/model/tethys/joint/vertical_fins_joint/0/cmd_pos">
-            data: -0.2
-        </output>
-    </plugin>
-
-    <!-- Dive (horizontal fin down) -->
-    <plugin filename="ignition-gazebo-triggered-publisher-system"
-            name="ignition::gazebo::systems::TriggeredPublisher">
-        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
-            <match field="data">16777237</match> <!-- Down arrow key -->
-        </input>
-        <output type="ignition.msgs.Double" topic="/model/tethys/joint/horizontal_fins_joint/0/cmd_pos">
-            data: 0.2
-        </output>
-    </plugin>
-
-    <!-- Ascend (horizontal fin up) -->
-    <plugin filename="ignition-gazebo-triggered-publisher-system"
-            name="ignition::gazebo::systems::TriggeredPublisher">
-        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
-            <match field="data">16777235</match> <!-- Up arrow key -->
-        </input>
-        <output type="ignition.msgs.Double" topic="/model/tethys/joint/horizontal_fins_joint/0/cmd_pos">
-            data: -0.2
-        </output>
-    </plugin>
-
-    <!-- Center fins -->
-    <plugin filename="ignition-gazebo-triggered-publisher-system"
-            name="ignition::gazebo::systems::TriggeredPublisher">
-        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
-            <match field="data">67</match> <!-- C key (center) -->
-        </input>
-        <output type="ignition.msgs.Double" topic="/model/tethys/joint/horizontal_fins_joint/0/cmd_pos">
-            data: 0.0
-        </output>
-    </plugin>
-
-    <plugin filename="ignition-gazebo-triggered-publisher-system"
-            name="ignition::gazebo::systems::TriggeredPublisher">
-        <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
-            <match field="data">82</match> <!-- R key (reset) -->
-        </input>
-        <output type="ignition.msgs.Double" topic="/model/tethys/joint/vertical_fins_joint/0/cmd_pos">
-            data: 0.0
-        </output>
-    </plugin>
-
-    <!-- GROUND ODOMETRY POSITION STATE PUBLISHER (FAKE LOCALIZATION) -->
-    <plugin filename="ignition-gazebo-pose-publisher-system" name="ignition::gazebo::systems::PosePublisher">
-      <publish_link_pose>true</publish_link_pose>
-      <publish_collision_pose>false</publish_collision_pose>
-      <publish_visual_pose>false</publish_visual_pose>
-      <publish_sensor_pose>false</publish_sensor_pose>
-      <publish_nested_model_pose>true</publish_nested_model_pose>
-      <update_frequency>20</update_frequency>
-    </plugin>
-
-    <plugin filename="ignition-gazebo-joint-state-publisher-system" name="ignition::gazebo::systems::JointStatePublisher">
-      <joint_name>horizontal_fins_joint</joint_name>
-      <joint_name>vertical_fins_joint</joint_name>
-      <joint_name>propeller_joint</joint_name>
-    </plugin>
 
   </model>
 </sdf>

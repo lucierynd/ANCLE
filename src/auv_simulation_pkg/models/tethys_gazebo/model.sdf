@@ -86,7 +86,7 @@
         </inertia>
       </inertial>
       <sensor name="imu" type="imu">
-        <update_rate>30</update_rate>
+        <update_rate>50</update_rate>
         <visualize>false</visualize>
       </sensor>
     </link>
@@ -634,25 +634,25 @@
         </output>
     </plugin>
 
-    <!-- Dive (horizontal fin down) -->
+    <!-- Dive -->
     <plugin filename="ignition-gazebo-triggered-publisher-system"
             name="ignition::gazebo::systems::TriggeredPublisher">
         <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
             <match field="data">16777237</match> <!-- Down arrow key -->
         </input>
         <output type="ignition.msgs.Double" topic="/model/tethys/joint/horizontal_fins_joint/0/cmd_pos">
-            data: 0.2
+            data: -0.2
         </output>
     </plugin>
 
-    <!-- Ascend (horizontal fin up) -->
+    <!-- Ascend -->
     <plugin filename="ignition-gazebo-triggered-publisher-system"
             name="ignition::gazebo::systems::TriggeredPublisher">
         <input type="ignition.msgs.Int32" topic="/keyboard/keypress">
             <match field="data">16777235</match> <!-- Up arrow key -->
         </input>
         <output type="ignition.msgs.Double" topic="/model/tethys/joint/horizontal_fins_joint/0/cmd_pos">
-            data: -0.2
+            data: 0.2
         </output>
     </plugin>
 
