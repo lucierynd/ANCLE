@@ -31,7 +31,7 @@ def generate_launch_description():
     rviz_config_file = LaunchConfiguration("rviz_config")
     rviz_config_arg = DeclareLaunchArgument(
         "rviz_config",
-        default_value=os.path.join(pkg_path, "rviz", "basic.rviz"),
+        default_value=os.path.join(pkg_path, "rviz", "test_kiss_icp.rviz"),
         description="Path to rviz config file",
     )
 
@@ -102,7 +102,8 @@ def generate_launch_description():
 
     delayedNodes = TimerAction(
         period=2.5,
-        actions=[rviz, bridge],
+        # actions=[rviz, bridge],
+        actions=[rviz],
     )
 
     robotState = Node(
@@ -143,41 +144,7 @@ def generate_launch_description():
             parameters=[{"use_sim_time": True}],
             output="screen"
     )
-
-    # KISS-ICP Odometry
-    kiss_icp = Node(
-        package="kiss_icp",
-        executable="kiss_icp_node",
-        name="kiss_icp_node",
-        output="screen",
-        remappings=[
-            ("pointcloud_topic", "/scan_3D"),
-        ],
-        parameters=[
-            {
-                # ROS node configuration
-                "base_frame": "base_link",
-                "lidar_odom_frame": "odom",
-                "publish_odom_tf": True,
-                "invert_odom_tf": False,
-                # ROS CLI arguments
-                "publish_debug_clouds": True,
-                "use_sim_time": True,
-                "position_covariance": 0.01,
-                "orientation_covariance": 0.01,
-            },
-            #os.path.join(get_package_share_directory("auv_simulation_pkg"), "params", "kiss_icp_config.yaml")
-        ],
-    )
-
-    altimeter_odom = Node(
-            package="auv_simulation_pkg",
-            executable="altimeter_to_odom.py",
-            name="altimeter_odom",
-            parameters=[{"use_sim_time": True}],
-            output="screen"
-    )
-
+    
     # EKF Node
     ekf = Node(
             package="robot_localization",
@@ -185,14 +152,38 @@ def generate_launch_description():
             name="ekf_filter_node",
             output="screen",
             parameters=[os.path.join(
-                get_package_share_directory("auv_simulation_pkg"),"params","ekf_3D_config.yaml")]
+                get_package_share_directory("auv_simulation_pkg"),"params","ekf_3D_config_split.yaml")]
+    )
+
+    fuse_odom = Node(
+            package="auv_simulation_pkg",
+            executable="fuse_odom.py",
+            name="fuse_odom",
+            parameters=[{"use_sim_time": True}],
+            output="screen"
+    )
+
+    lidar_icp = Node(
+            package="auv_simulation_pkg",
+            executable="lidar_icp.py",
+            name="lidar_icp",
+            parameters=[{"use_sim_time": True}],
+            output="screen"
+    )
+
+    altimeter_to_odom = Node(
+            package="auv_simulation_pkg",
+            executable="altimeter_to_odom.py",
+            name="altimeter_to_odom",
+            parameters=[{"use_sim_time": True}],
+            output="screen"
     )
 
     return LaunchDescription(
         [
             rviz_config_arg,
-            gazebo,
-            robotState,
+            # gazebo,
+            # robotState,
             delayedNodes,
             generate_static_tf_publisher_node(
                 "scan_omni", "tethys/scan_omni/scan_omni"
@@ -203,11 +194,12 @@ def generate_launch_description():
             generate_static_tf_publisher_node(
                 "imu_link", "tethys/imu_link/imu"
             ),
-            #rf2o,
-            #rf2o_covariance_gate,
-            kiss_icp,
-            #altimeter_odom,
-            #ekf
+            rf2o,
+            rf2o_covariance_gate,
+            fuse_odom,
+            lidar_icp,
+            altimeter_to_odom,
+            ekf
         ]
     )
    

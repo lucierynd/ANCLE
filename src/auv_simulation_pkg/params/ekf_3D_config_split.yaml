@@ -18,13 +18,13 @@ ekf_filter_node:
     # Publish the odom -> base_link transform
     publish_tf: true
 
-    # ========== SENSOR 1: Fused odom ==========
-    odom0: /fused_odom
-    odom0_config: [true,  true,  true, # x, y, z
-                   true, true, true, # roll, pitch, yaw 
-                   true,  true,  false, # vx, vy, vz 
-                   false, false, true, # vroll, vpitch, vyaw
-                   false, false, false] # ax, ay, az 
+    # ========== SENSOR 1: rf2o ==========
+    odom0: /odom_rf2o
+    odom0_config: [true,  true,  false,    # x, y, z
+                   false, false, true,     # roll, pitch, yaw
+                   true,  true,  false,    # vx, vy, vz
+                   false, false, true,     # vroll, vpitch, vyaw
+                   false, false, false]    # ax, ay, az
     odom0_queue_size: 10
     odom0_differential: false
     odom0_relative: false
@@ -40,21 +40,32 @@ ekf_filter_node:
     odom1_differential:  false
     odom1_relative: false
 
-    # # ========== SENSOR 3: IMU ==========
-    # imu0: /imu/data
-    # imu0_config: [false, false, false, # x, y, z
-    #               false, true, true,  # roll, pitch, yaw 
-    #               false, false, false,  # vx, vy, vz 
-    #               false, true, true, # vroll, vpitch, vyaw
-    #               true, true, true] # ax, ay, az 
+    # ========== SENSOR 3: altimeter ==========
+    odom2: /altimeter_odom
+    odom2_config: [true, true, true,
+                   false, false, false,
+                   false, false, true,  
+                   false, false, false,
+                   false, false, false]   
+    odom2_queue_size:  10
+    odom2_differential:  false
+    odom2_relative: false
 
-    # imu0_queue_size: 10
-    # imu0_differential: false
-    # imu0_relative: true               
-    # imu0_remove_gravitational_acceleration: true
-    # imu0_pose_rejection_threshold: 0.8
-    # imu0_twist_rejection_threshold: 0.8
-    # imu0_linear_acceleration_rejection_threshold: 0.8
+    # ========== SENSOR 4: IMU ==========
+    imu0: /imu/data
+    imu0_config: [false, false, false, # x, y, z
+                  true, true, true,  # roll, pitch, yaw 
+                  false, false, false,  # vx, vy, vz 
+                  true, true, true, # vroll, vpitch, vyaw
+                  true, true, true] # ax, ay, az 
+
+    imu0_queue_size: 10
+    imu0_differential: false
+    imu0_relative: true               
+    imu0_remove_gravitational_acceleration: true
+    imu0_pose_rejection_threshold: 0.8
+    imu0_twist_rejection_threshold: 0.8
+    imu0_linear_acceleration_rejection_threshold: 0.8
 
     # Process noise covariance
     # Smaller values = trust predictions more, larger = trust measurements more

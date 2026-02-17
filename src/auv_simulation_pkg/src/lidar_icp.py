@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 Projective Point-to-Plane ICP node for ROS2 Humble.
 
@@ -86,43 +87,43 @@ def icp_point_to_plane_restricted(
     max_corr_dist: float = 1.0,
 ):
     """
-    Point-to-plane ICP solving only for (tx, ty, tz, yaw)
+    Point-to-plane ICP solving only for (tx, ty, tz, yaw).
 
-    Parameters:
-    source        : (M, 3) source cloud (current scan)
-    target        : (N, 3) target cloud (previous scan, in odom frame)
-    target_normals: (N, 3) normals of target cloud
-    init_T        : 4×4 initial transform guess (full 6-DOF)
-    max_iter      : maximum iterations
-    tolerance     : convergence threshold on parameter update norm
-    max_corr_dist : reject correspondences farther than this (metres)
-
-    Returns:
-    T_refined : 4×4 refined transform
-    converged : bool
+    Returns
+    -------
+    T_refined  : 4×4 refined transform.
+    converged  : bool
+    icp_cov_4  : (4, 4) covariance of [tx, ty, tz, yaw] — None if degenerate.
+    fitness    : fraction of source points that found a valid correspondence.
+    mean_error : mean absolute point-to-plane residual of inliers.
     """
-
     T = init_T.copy()
     tree = cKDTree(target)
     converged = False
+    icp_cov_4 = None
+    fitness = 0.0
+    mean_error = float("inf")
+    n_source = len(source)
 
     for iteration in range(max_iter):
         # transform source into target frame with current T
-        src_h = np.hstack([source, np.ones((len(source), 1))])
+        src_h = np.hstack([source, np.ones((n_source, 1))])
         src_t = (T @ src_h.T).T[:, :3]
 
         # find closest target points
         dists, indices = tree.query(src_t, k=1, workers=-1)
         mask = dists < max_corr_dist
-        if mask.sum() < 10:
-            break  # not enough correspondences
+        n_inliers = mask.sum()
+        if n_inliers < 10:
+            break
 
-        p = src_t[mask]              # transformed source pts
-        q = target[indices[mask]]    # closest target pts
-        n = target_normals[indices[mask]]  # normals
+        fitness = n_inliers / n_source
+        p = src_t[mask]
+        q = target[indices[mask]]
+        n = target_normals[indices[mask]]
 
-        # build the linear system for 4 unknowns
         residuals = np.sum(n * (p - q), axis=1)
+        mean_error = np.mean(np.abs(residuals))
 
         J = np.zeros((len(residuals), 4))
         J[:, 0] = n[:, 0]
@@ -130,7 +131,6 @@ def icp_point_to_plane_restricted(
         J[:, 2] = n[:, 2]
         J[:, 3] = -n[:, 0] * p[:, 1] + n[:, 1] * p[:, 0]
 
-        # Solve
         JtJ = J.T @ J
         Jtr = J.T @ residuals
         try:
@@ -138,16 +138,69 @@ def icp_point_to_plane_restricted(
         except np.linalg.LinAlgError:
             break
 
-        # Build incremental transform (only tx, ty, tz, yaw)
-        dT = build_transform(delta[0], delta[1], delta[2],
-                             0.0, 0.0, delta[3])
+        dT = build_transform(delta[0], delta[1], delta[2], 0.0, 0.0, delta[3])
         T = dT @ T
 
         if np.linalg.norm(delta) < tolerance:
             converged = True
             break
 
-    return T, converged
+    # Covariance from final JᵀJ
+    if n_inliers > 4 and mean_error < float("inf"):
+        try:
+            residual_var = np.mean(residuals ** 2)  # σ²
+            icp_cov_4 = residual_var * np.linalg.inv(JtJ)
+        except np.linalg.LinAlgError:
+            icp_cov_4 = None
+
+    return T, converged, icp_cov_4, fitness, mean_error
+
+def build_odom_covariance(icp_cov_4, converged, fitness, mean_error,
+                        fit_thresh=0.3, err_thresh=0.15):
+    """
+    Build a 6×6 pose covariance (row-major, 36 elements) for the Odometry msg
+
+    Layout: [x, y, z, roll, pitch, yaw]
+
+    - roll & pitch are from fused odom (absolute) → small fixed variance
+    - x, y, z, yaw come from ICP → use (JᵀJ)⁻¹ when healthy, inflate when not
+
+    Input:
+    converged  : ICP converged within max_iter
+    fitness    : fraction of source pts with a valid correspondence (0–1)
+    mean_error : mean |point-to-plane residual| in metres
+    """
+    HIGH_VAR = 1e3
+    FIXED_RP_VAR = 1e-6
+
+    cov6 = np.full((6, 6), 0.0)
+
+    # determine if the result is trustworthy
+    healthy = (
+        converged
+        and icp_cov_4 is not None
+        and fitness > fit_thresh
+        and mean_error < err_thresh
+    )
+
+    if healthy:
+        idx = [0, 1, 2, 5]  # tx, ty, tz, yaw
+        for i, ci in enumerate(idx):
+            for j, cj in enumerate(idx):
+                cov6[ci, cj] = icp_cov_4[i, j]
+
+        MIN_VAR = 1e-4
+        for ci in idx:
+            cov6[ci, ci] = max(cov6[ci, ci], MIN_VAR)
+    else:
+        for ci in [0, 1, 2, 5]:
+            cov6[ci, ci] = HIGH_VAR
+
+    # Roll & pitch always fixed
+    cov6[3, 3] = FIXED_RP_VAR
+    cov6[4, 4] = FIXED_RP_VAR
+
+    return list(cov6.flatten())
 
 # ---------------------------------------------------------------------------
 # ROS2 Node
@@ -157,12 +210,12 @@ class LidarICP(Node):
         super().__init__("lidar_icp")
 
         # Param
-        self.declare_parameter("max_icp_iter", 15)
+        self.declare_parameter("max_icp_iter", 30)
         self.declare_parameter("icp_tolerance", 1e-6)
-        self.declare_parameter("max_corr_dist", 1.0)
-        self.declare_parameter("voxel_size", 0.1)        # down-sample leaf
-        self.declare_parameter("normal_k", 10)            # k for normal estimation
-        self.declare_parameter("min_scan_points", 50)
+        self.declare_parameter("max_corr_dist", 0.1)
+        self.declare_parameter("voxel_size", 1.0)        # down-sample leaf
+        self.declare_parameter("normal_k", 5)            # k for normal estimation
+        self.declare_parameter("min_scan_points", 150)
 
         self.max_icp_iter = self.get_parameter("max_icp_iter").value
         self.icp_tolerance = self.get_parameter("icp_tolerance").value
@@ -185,14 +238,14 @@ class LidarICP(Node):
 
         # Subscribers
         self.odom_sub = self.create_subscription(
-            Odometry, "/fuse_odom", self._odom_cb, 10
+            Odometry, "/fused_odom", self._odom_cb, 10
         )
         self.scan_sub = self.create_subscription(
             PointCloud2, "/scan_3D", self._scan_cb, sensor_qos
         )
 
         # Publisher
-        self.odom_pub = self.create_publisher(Odometry, "/odom_refined", 10)
+        self.odom_pub = self.create_publisher(Odometry, "/icp_odom", 10)
 
         self.get_logger().info("LidarICP ready – waiting for data …")
 
@@ -239,7 +292,7 @@ class LidarICP(Node):
         # init_T = identity (both clouds are already roughly in odom frame)
         init_T = np.eye(4)
 
-        T_correction, converged = icp_point_to_plane_restricted(
+        T_correction, converged, icp_cov_4, fitness, mean_error = icp_point_to_plane_restricted(
             source=pts_odom,
             target=self.prev_cloud,
             target_normals=self.prev_normals,
@@ -256,7 +309,7 @@ class LidarICP(Node):
         # Extract refined pose 
         T_refined = T_correction @ T_odom
 
-        # Decompose: keep ONLY x, y, z, yaw from ICP; pitch & roll from EKF
+        # Decompose: keep ONLY x, y, z, yaw from ICP; pitch & roll from fused odom
         refined_rpy = tf_transformations.euler_from_matrix(T_refined)
         ref_x = T_refined[0, 3]
         ref_y = T_refined[1, 3]
@@ -265,7 +318,12 @@ class LidarICP(Node):
         ref_roll = roll
         ref_pitch = pitch
 
-        self._publish_odom(odom, ref_x, ref_y, ref_z, ref_roll, ref_pitch, ref_yaw)
+        # Build covariance
+        covariance = build_odom_covariance(
+            icp_cov_4, converged, fitness, mean_error
+        )
+
+        self._publish_odom(odom, ref_x, ref_y, ref_z, ref_roll, ref_pitch, ref_yaw, covariance)
 
         # Update stored cloud
         self.prev_cloud = corrected_pts
@@ -273,6 +331,9 @@ class LidarICP(Node):
 
         if not converged:
             self.get_logger().debug("ICP did not converge this frame.")
+        self.get_logger().debug(
+            f"ICP fitness={fitness:.2f}  mean_err={mean_error:.4f}m  converged={converged}"
+        )
 
     # ---------------------------------------------------------------------------
     # helpers
@@ -307,7 +368,7 @@ class LidarICP(Node):
         return points[idx]
 
     def _publish_odom(self, ref_odom: Odometry,
-                      x, y, z, roll, pitch, yaw):
+                      x, y, z, roll, pitch, yaw, covariance=None):
         """Build and publish the refined Odometry message"""
         msg = Odometry()
         msg.header.stamp = self.get_clock().now().to_msg()
@@ -319,6 +380,15 @@ class LidarICP(Node):
         msg.pose.pose.position.z = float(z)
         msg.pose.pose.orientation = rpy_to_quat(roll, pitch, yaw)
         msg.twist = ref_odom.twist
+
+        if covariance is not None:
+            msg.pose.covariance = covariance
+        else:
+            # Fallback: high uncertainty
+            cov = [0.0] * 36
+            for i in range(6):
+                cov[i * 6 + i] = 1e3
+            msg.pose.covariance = cov
 
         self.odom_pub.publish(msg)
 

@@ -30,7 +30,7 @@ ekf_filter_node:
     odom0_differential: false
     odom0_relative: false
 
-    # ========== SENSOR 2: IMU ==========
+    # ========== IMU ==========
     imu0: /imu/data
     # For 2D robot: use orientation (yaw) and angular velocity (vyaw)
     # Also use linear acceleration for better velocity estimation
@@ -47,7 +47,6 @@ ekf_filter_node:
     imu0_twist_rejection_threshold: 0.8
     imu0_linear_acceleration_rejection_threshold: 0.8
 
-    # Process noise covariance (tune these based on your sensors)
     # Smaller values = trust predictions more, larger = trust measurements more
     process_noise_covariance: [0.05,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,
                                0.0,   0.05,  0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,   0.0,

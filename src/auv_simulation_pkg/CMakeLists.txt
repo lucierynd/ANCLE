@@ -24,6 +24,7 @@ install(PROGRAMS
   src/altimeter_to_odom.py
   src/rf2o_covariance_gate.py
   src/fuse_odom.py
+  src/lidar_icp.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

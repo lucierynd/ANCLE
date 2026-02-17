@@ -17,12 +17,12 @@ class FuseOdom(Node):
         self.declare_parameter('rf2o_topic', '/odom_rf2o')
         self.declare_parameter('imu_topic', '/imu/data')
         self.declare_parameter('altimeter_topic', '/altimeter/data')
-        self.declare_parameter('odom_topic', '/fuse_odom')
+        self.declare_parameter('odom_topic', '/fused_odom')
         self.declare_parameter('output_frame', 'odom')
         self.declare_parameter('child_frame', 'base_link')
-        self.declare_parameter('position_covariance', 0.0)
-        self.declare_parameter('velocity_covariance', 0.0)
-        self.declare_parameter('publish_tf', True)
+        self.declare_parameter('position_covariance', 0.05)
+        self.declare_parameter('velocity_covariance', 0.1)
+        self.declare_parameter('publish_tf', False)
 
         rf2o_topic = self.get_parameter('rf2o_topic').value
         imu_topic = self.get_parameter('imu_topic').value
@@ -122,12 +122,18 @@ class FuseOdom(Node):
         # From IMU gyroscope
         out.twist.twist.angular = self.latest_imu.angular_velocity
 
-        # Covaiance
+        # Covariance: same for everything except x and y (twist and pose) -> depends on rf2o covariance
+        rf2o_pose_cov = self.latest_rf2o.pose.covariance
+        rf2o_twist_cov = self.latest_rf2o.twist.covariance
         pose_cov = [0.0] * 36
         twist_cov = [0.0] * 36
         for i in range(6):
             pose_cov[i * 7] = self.pos_cov
             twist_cov[i * 7] = self.vel_cov
+        pose_cov[0]  = rf2o_pose_cov[0]    # x from rf2o
+        pose_cov[7]  = rf2o_pose_cov[7]    # y from rf2o
+        twist_cov[0]  = rf2o_twist_cov[0]  # vx from rf2o
+        twist_cov[7]  = rf2o_twist_cov[7]  # vy from rf2o
         out.pose.covariance = pose_cov
         out.twist.covariance = twist_cov
 
