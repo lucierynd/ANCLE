@@ -17,14 +17,14 @@ def generate_launch_description():
                 'base_frame_id': 'base_link',
 
                 # Map resolution (meters)
-                'resolution': 0.5,
+                'resolution': 0.20,
 
                 # Sensor model
                 'sensor_model/max_range': 20.0,
 
-                # Filtering
-                'pointcloud_min_z': -2.0,
-                'pointcloud_max_z':  2.0,
+                # # Filtering
+                # 'pointcloud_min_z': 0.0,
+                # 'pointcloud_max_z':  2.0,
 
                 # Publish options
                 'publish_octomap_binary': True,

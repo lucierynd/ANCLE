@@ -102,7 +102,7 @@ def generate_launch_description():
 
     delayedNodes = TimerAction(
         period=2.5,
-        # actions=[rviz, bridge],
+        actions=[rviz, bridge],
         actions=[rviz],
     )
 
@@ -137,10 +137,10 @@ def generate_launch_description():
             ]
     )
 
-    rf2o_covariance_gate = Node(
+    project_rf2o = Node(
             package="auv_simulation_pkg",
-            executable="rf2o_covariance_gate.py",
-            name="rf2o_covariance_gate",
+            executable="project_rf2o.py",
+            name="project_rf2o",
             parameters=[{"use_sim_time": True}],
             output="screen"
     )
@@ -152,7 +152,7 @@ def generate_launch_description():
             name="ekf_filter_node",
             output="screen",
             parameters=[os.path.join(
-                get_package_share_directory("auv_simulation_pkg"),"params","ekf_3D_config_split.yaml")]
+                get_package_share_directory("auv_simulation_pkg"),"params","ekf_3D_config.yaml")]
     )
 
     fuse_odom = Node(
@@ -182,8 +182,8 @@ def generate_launch_description():
     return LaunchDescription(
         [
             rviz_config_arg,
-            # gazebo,
-            # robotState,
+            gazebo,
+            robotState,
             delayedNodes,
             generate_static_tf_publisher_node(
                 "scan_omni", "tethys/scan_omni/scan_omni"
@@ -195,7 +195,7 @@ def generate_launch_description():
                 "imu_link", "tethys/imu_link/imu"
             ),
             rf2o,
-            rf2o_covariance_gate,
+            project_rf2o,
             fuse_odom,
             lidar_icp,
             altimeter_to_odom,

@@ -14,7 +14,7 @@ class FuseOdom(Node):
         super().__init__('fuse_odom')
 
         # Parameters
-        self.declare_parameter('rf2o_topic', '/odom_rf2o')
+        self.declare_parameter('rf2o_topic', '/odom_rf2o_projected')
         self.declare_parameter('imu_topic', '/imu/data')
         self.declare_parameter('altimeter_topic', '/altimeter/data')
         self.declare_parameter('odom_topic', '/fused_odom')

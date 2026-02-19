@@ -25,6 +25,7 @@ install(PROGRAMS
   src/rf2o_covariance_gate.py
   src/fuse_odom.py
   src/lidar_icp.py
+  src/project_rf2o.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

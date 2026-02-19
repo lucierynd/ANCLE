@@ -11,12 +11,12 @@ class AltimeterToOdom(Node):
         super().__init__('altimeter_to_odom')
         
         # Parameters
-        self.declare_parameter('altimeter_topic', '/altimeter')
+        self.declare_parameter('altimeter_topic', '/altimeter/data')
         self.declare_parameter('odom_topic', '/altimeter_odom')
         self.declare_parameter('output_frame', 'odom')
         self.declare_parameter('child_frame', 'base_link')
-        self.declare_parameter('position_covariance', 0.01)  # Tune based on sensor accuracy
-        self.declare_parameter('velocity_covariance', 0.05)
+        self.declare_parameter('position_covariance', 0.0)  # Tune based on sensor accuracy
+        self.declare_parameter('velocity_covariance', 0.0)
         
         altimeter_topic = self.get_parameter('altimeter_topic').value
         odom_topic = self.get_parameter('odom_topic').value
