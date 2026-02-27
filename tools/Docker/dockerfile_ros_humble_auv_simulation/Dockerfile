@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     ros-humble-octomap-ros \
     ros-humble-octomap-rviz-plugins \
     ros-humble-octomap-server \
+    ros-humble-tf-transformations \
     curl \
     nano \
     gnupg \
@@ -59,24 +60,18 @@ RUN /bin/bash -c "source /opt/ros/humble/setup.bash && rosdep update && rosdep i
 RUN git clone https://github.com/MAPIRlab/rf2o_laser_odometry.git
 
 # =============================================================
-# Kiss-ICP SETUP
+# AUV simulation setup: comment out when modifying package
+# + add this to launch docker command
+# -v /home/robotuna/ANCLE/tools/python_src:/tools/python_src/ 
 # =============================================================
 
-RUN git clone https://github.com/PRBonn/kiss-icp.git
+COPY src/auv_simulation_pkg /ros2_ws/src/auv_simulation_pkg
 
 # =============================================================
-# ANCLE custom package setup
+# Python tool scripts
 # =============================================================
 
-WORKDIR /ros2_ws/src
-COPY src/ancle_pkg /ros2_ws/src/ancle_pkg 
-
-# =============================================================
-# AUV simulation setup 
-# =============================================================
-
-# To add once simulation is ready
-# COPY src/auv_simulation_pkg /ros2_ws/src/auv_simulation_pkg
+COPY tools/python_src /tools/python_src
 
 # =============================================================
 # Final setup

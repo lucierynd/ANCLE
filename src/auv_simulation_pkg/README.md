@@ -1,6 +1,6 @@
 # AUV simulation package
 
-Simulation of an AUV in an underwater environment. 
+Simulation of an AUV in an underwater environment to test the ANCLE perception pipeline.
 
 ## Docker stuff:
 
@@ -21,7 +21,6 @@ docker run -it --rm\
   --volume="/tmp/.X11-unix:/tmp/. X11-unix:rw" \
   --runtime nvidia \
   --gpus all \
-  -v /home/robotuna/ANCLE/src/auv_simulation_pkg:/ros2_ws/src/auv_simulation_pkg/ \
   --name ancle_auv_simulation_humble_container \
   ancle_auv_simulation_humble_image \
   bash
@@ -33,22 +32,16 @@ Run the same container in a new window:
 docker exec -it ancle_auv_simulation_humble_container bash
 ```
 
-### Package set up (while developing):
-
-Build and source the simulation package:
+## Launch Gazebo only
 
 ```bash
-colcon build --symlink-install
-```
-
-```bash
-source install/setup.bash
+ros2 launch auv_simulation_pkg gazebo_only.launch.py 
 ```
 
 ## Launch simulation only
 
 ```bash
-ros2 launch auv_simulation_pkg sim.launch.py 
+ros2 launch auv_simulation_pkg sim3D.launch.py 
 ```
 
 ## Launch SLAM
@@ -56,6 +49,8 @@ ros2 launch auv_simulation_pkg sim.launch.py
 ```bash
 ros2 launch auv_simulation_pkg sim.slam.launch.py 
 ```
+
+Then, once rviz and gazebo are set up:
 
 ```bash
 ros2 launch auv_simulation_pkg slam.launch.py
@@ -66,6 +61,8 @@ ros2 launch auv_simulation_pkg slam.launch.py
 ```bash
 ros2 launch auv_simulation_pkg sim.octomap.slam.launch.py 
 ```
+
+Then, once rviz and gazebo are set up:
 
 ```bash
 ros2 launch auv_simulation_pkg octomap.slam.launch.py 
