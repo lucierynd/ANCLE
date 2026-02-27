@@ -17,7 +17,7 @@ def generate_launch_description():
                 'base_frame_id': 'base_link',
 
                 # Map resolution (meters)
-                'resolution': 0.20,
+                'resolution': 0.50,
 
                 # Sensor model
                 'sensor_model/max_range': 20.0,

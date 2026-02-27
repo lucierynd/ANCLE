@@ -31,7 +31,7 @@ def generate_launch_description():
     rviz_config_file = LaunchConfiguration("rviz_config")
     rviz_config_arg = DeclareLaunchArgument(
         "rviz_config",
-        default_value=os.path.join(pkg_path, "rviz", "test_kiss_icp.rviz"),
+        default_value=os.path.join(pkg_path, "rviz", "3D_config.rviz"),
         description="Path to rviz config file",
     )
 
@@ -103,7 +103,6 @@ def generate_launch_description():
     delayedNodes = TimerAction(
         period=2.5,
         actions=[rviz, bridge],
-        actions=[rviz],
     )
 
     robotState = Node(
@@ -117,8 +116,6 @@ def generate_launch_description():
         ],
     )
 
-    # IMU + lidar odometry without TF publishing
-    # RF2O Node - Lidar only odometry without TF publishing
     rf2o = Node(
             package="rf2o_laser_odometry",
             executable="rf2o_laser_odometry_node",
@@ -144,8 +141,7 @@ def generate_launch_description():
             parameters=[{"use_sim_time": True}],
             output="screen"
     )
-    
-    # EKF Node
+
     ekf = Node(
             package="robot_localization",
             executable="ekf_node",

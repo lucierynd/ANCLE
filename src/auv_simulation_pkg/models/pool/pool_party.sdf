@@ -37,6 +37,8 @@
         <ambient_light>0.4 0.4 0.4</ambient_light>
         <background_color>0.0 0.2 0.6</background_color>
         <camera_pose>-153 7 4 0 0.4 0.90</camera_pose>
+        <!-- Bigger canyon start - camera pose -->
+        <!-- <camera_pose>-153 -104 4 0 0.4 0.90</camera_pose> -->
       </plugin>
 
       <!-- World control -->
@@ -181,13 +183,26 @@
     </include>
 
     <!-- Tethys AUV -->
-
     <include>
       <uri>
         /ros2_ws/src/auv_simulation_pkg/models/tethys_gazebo
       </uri>
       <name>tethys</name>
       <pose>-150 10 2 0 0 0</pose>
+      <!-- Bigger canyon start - AUV pose -->
+      <!-- <pose>-150 -97 2.5 0 0 0</pose> -->
+      <!-- Autonomous navigation from waypoint to waypoint (sketchy controller) -->
+      <!-- <plugin filename="ignition-gazebo-trajectory-follower-system"
+        name="ignition::gazebo::systems::TrajectoryFollower">
+        <link_name>base_link</link_name>
+        <torque>20</torque>
+        <force>2</force>
+        <waypoints>
+          <waypoint>-40 -80</waypoint>
+          <waypoint>145 -65</waypoint>
+          <waypoint>-40 -80</waypoint>
+        </waypoints>
+      </plugin> -->
     </include>
 
   </world>

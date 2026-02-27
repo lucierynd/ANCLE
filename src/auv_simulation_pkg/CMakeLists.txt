@@ -33,7 +33,6 @@ install(
   DIRECTORY
     launch
     models
-    map
     rviz
     params
   DESTINATION
