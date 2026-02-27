@@ -2,7 +2,7 @@
 
 Simulation of an AUV in an underwater environment to test the ANCLE perception pipeline.
 
-![ANCLE Perception pipeline runnning on the Gazebo simulation](tools/images/full_pipeline_on_sim.png)
+![ANCLE Perception pipeline runnning on the Gazebo simulation](../tools/images/full_pipeline_on_sim.png)
 
 ## Docker stuff:
 
