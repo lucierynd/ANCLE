@@ -23,8 +23,9 @@ def generate_launch_description():
                 'sensor_model/max_range': 2.0,
 
                 # Filtering
-                'pointcloud_min_z': -2.0,
-                'pointcloud_max_z':  2.0,
+                'pointcloud_min_z': -0.20,
+                'pointcloud_max_z':  0.20,
+                'pointcloud_min_x':  0.20,
 
                 # Publish options
                 'publish_octomap_binary': True,

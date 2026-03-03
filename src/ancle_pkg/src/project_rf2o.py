@@ -70,9 +70,9 @@ class RF2OCovarianceGate(Node):
         
         # associate covariance
         BAD = 1e6
-        GOOD_POS = 0.05
+        GOOD_POS = 0.5
         GOOD_VEL = 0.1
-        GOOD_YAW = 0.05
+        GOOD_YAW = 0.5
 
         pose_cov = np.array(msg.pose.covariance).reshape(6, 6)
         twist_cov = np.array(msg.twist.covariance).reshape(6, 6)

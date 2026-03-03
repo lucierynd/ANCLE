@@ -17,6 +17,13 @@ def generate_launch_description():
         description='Whether to launch RViz'
     )
 
+    # Declare the launch argument for mapping part of the pipeline
+    declare_mapping_arg = DeclareLaunchArgument(
+        'mapping',
+        default_value='false',
+        description='Whether to launch mapping part of ANCLE pipeline'
+    )
+
     # Start RPlidar
     rplidar = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
@@ -54,16 +61,12 @@ def generate_launch_description():
         arguments=['0.0', '0.0', '0.025', '0.0', '0.0', '0.0', 'base_link', 'laser_frame']
     )
 
-
-    # IMU python publisher 
     imu_publisher = Node(
         package='ancle_pkg',
         executable='imu_publisher.py',
         name='imu_publisher'
     )
 
-
-    # RF2O Node
     rf2o = Node(
             package="rf2o_laser_odometry",
             executable="rf2o_laser_odometry_node",
@@ -101,7 +104,6 @@ def generate_launch_description():
             output="screen",
     )
 
-    # EKF Node: 3D mode, uses 2D lidar + IMU + 3D Lidar
     ekf_3D = Node(
             package="robot_localization",
             executable="ekf_node",
@@ -127,7 +129,6 @@ def generate_launch_description():
             output="screen"
     )
 
-    # RViz Node 
     rviz = Node(
         package='rviz2' ,
         executable='rviz2',
@@ -154,10 +155,12 @@ def generate_launch_description():
     delayedNodes = TimerAction(
         period=10.0,
         actions=[slam_toolbox, octomap],
+        condition=IfCondition(LaunchConfiguration('mapping'))
     )
 
     return LaunchDescription([
         declare_rviz_arg,
+        declare_mapping_arg,
         rplidar,
         cyglidar,
         transform_rplidar_base_link,
@@ -171,5 +174,5 @@ def generate_launch_description():
         static_altimeter_odom,
         ekf_3D,
         rviz,
-        #delayedNodes
+        delayedNodes
     ])

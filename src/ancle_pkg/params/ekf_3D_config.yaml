@@ -41,16 +41,16 @@ ekf_filter_node:
     odom1_relative: false
     
 
-    # # ========== SENSOR 3: ICP refined odom ==========
-    # odom2: /icp_odom
-    # odom2_config: [true, true, true,
-    #                false, false, true,
-    #                false, false, false,  
-    #                false, false, false,
-    #                false, false, false]   
-    # odom2_queue_size:  10
-    # odom2_differential:  false
-    # odom2_relative: false
+    # ========== SENSOR 3: ICP refined odom ==========
+    odom2: /icp_odom
+    odom2_config: [true, true, true,
+                   false, false, true,
+                   false, false, false,  
+                   false, false, false,
+                   false, false, false]   
+    odom2_queue_size:  10
+    odom2_differential:  false
+    odom2_relative: false
 
     # ========== SENSOR 4: IMU ==========
     imu0: /imu/data
