@@ -43,7 +43,7 @@ def generate_launch_description():
         package='tf2_ros',
         executable='static_transform_publisher',
         name='transform_imu_base_link',
-        arguments=['0.0', '0.0', '0.0', '3.14', '0.0', '0.0', 'base_link', 'imu_link']
+        arguments=['0.0', '0.0', '0.0', '0', '0.0', '0.0', 'base_link', 'imu_link']
     )
 
     # transform from 3D lidar to base_link
@@ -171,5 +171,5 @@ def generate_launch_description():
         static_altimeter_odom,
         ekf_3D,
         rviz,
-        # delayedNodes
+        #delayedNodes
     ])
