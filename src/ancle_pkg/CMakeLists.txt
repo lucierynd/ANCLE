@@ -34,7 +34,9 @@ install(
   PROGRAMS
     src/imu_publisher.py
     src/static_altimeter_odom.py
-    src/camera_info_publisher.py
+    src/fuse_odom.py
+    src/lidar_icp.py
+    src/project_rf2o.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

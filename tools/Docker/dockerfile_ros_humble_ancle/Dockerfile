@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     ros-humble-octomap-ros \
     ros-humble-octomap-rviz-plugins \
     ros-humble-octomap-server \
+    ros-humble-tf-transformations \
     curl \
     nano \
     gnupg \
@@ -68,12 +69,6 @@ RUN git clone https://github.com/CygLiDAR-ROS/cyglidar_d2.git
 # =============================================================
 
 RUN git clone https://github.com/MAPIRlab/rf2o_laser_odometry.git
-
-# =============================================================
-# Kiss-ICP SETUP
-# =============================================================
-
-RUN git clone https://github.com/PRBonn/kiss-icp.git
 
 # =============================================================
 # ANCLE custom package setup

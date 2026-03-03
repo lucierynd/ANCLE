@@ -11,7 +11,7 @@ ANCLE perception pipeline adapted to run on a jetson Orin Nano with the followin
 Build the docker container from the ANCLE main folder:
 
 ```bash
-docker build -f tools/Docker/dockerfile_ros_humble_slam_toolbox/Dockerfile -t ancle_slam_toolbox_humble_image .
+docker build -f tools/Docker/dockerfile_ros_humble_ancle/Dockerfile -t ancle_humble_image .
 ```
 
 Starting container:
@@ -30,16 +30,16 @@ docker run -it --rm\
   --device=$(readlink -f /dev/cyglidar) \
   --device=$(readlink -f /dev/rplidar) \
   --device=/dev/i2c-7:/dev/i2c-7 \
-  -v /home/robotuna/ANCLE:/home/ANCLE \
-  --name ancle_slam_toolbox_humble_container \
-  ancle_slam_toolbox_humble_image \
+  -v /home/robotuna/ANCLE/src/ancle_pkg:/ros2_ws/src/ancle_pkg\
+  --name ancle_humble_container \
+  ancle_humble_image \
   bash
 ```
 
 Container in new terminal window:
 
 ```bash
-docker exec -it ancle_slam_toolbox_humble_container bash
+docker exec -it ancle_humble_container bash
 ```
 
 **Run lidar inertial slam**

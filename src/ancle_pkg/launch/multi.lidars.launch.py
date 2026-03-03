@@ -17,12 +17,6 @@ def generate_launch_description():
         description='Whether to launch RViz'
     )
 
-    declare_use_3d_ekf_arg = DeclareLaunchArgument(
-        'use_3d_ekf',
-        default_value='false',
-        description='Whether to use 3D ekf (2D lidar + IMU + kiss-icp/3D Lidar + static altitude publisher) vs 2D mode (2D lidar + IMU only)'
-    )
-
     # Start RPlidar
     rplidar = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
@@ -78,7 +72,7 @@ def generate_launch_description():
             arguments=["--ros-args", "--log-level", "rf2o_laser_odometry:=error"],
             parameters=[
                 {"laser_scan_topic": "/scan"},
-                {"odom_topic": "/odom_rf2o"},
+                {"odom_topic": "/odom_rf2o_raw"},
                 {"publish_tf": False},      
                 {"base_frame_id": "base_link"},
                 {"odom_frame_id": "odom"},
@@ -88,52 +82,23 @@ def generate_launch_description():
             ]
     )
 
-    # KISS-ICP Odometry
-    kiss_icp = Node(
-        package="kiss_icp",
-        executable="kiss_icp_node",
-        name="kiss_icp_node",
-        output="screen",
-        remappings=[
-            ("pointcloud_topic", "/scan_3D"),
-        ],
-        parameters=[
-            {
-                # ROS node configuration
-                "base_frame": "base_link",
-                "lidar_odom_frame": "odom",
-                "publish_odom_tf": False,
-                "invert_odom_tf": False,
-                # ROS CLI arguments
-                "publish_debug_clouds": True,
-                "use_sim_time": False,
-                "position_covariance": 0.01,
-                "orientation_covariance": 0.01,
-            },
-            os.path.join(get_package_share_directory("ancle_pkg"), "params", "kiss_icp_config.yaml")
-        ],
-        condition=IfCondition(LaunchConfiguration('use_3d_ekf'))
+    # Projects rf2o estimate depending on imu attitude
+    project_rf2o = Node(
+            package="ancle_pkg",
+            executable="project_rf2o.py",
+            name="project_rf2o",
+            parameters=[{"use_sim_time": False}],
+            output="screen"
     )
+
 
     # Publishes static altitude data (no pressure sensor yet)
     static_altimeter_odom = Node(
             package="ancle_pkg",
             executable="static_altimeter_odom.py",
             name="static_altimeter_odom",
-            parameters=[{"use_sim_time": True}],
+            parameters=[{"use_sim_time": False}],
             output="screen",
-            condition=IfCondition(LaunchConfiguration('use_3d_ekf'))
-    )
-
-    # EKF Node: 2D mode, uses 2D lidar + IMU
-    ekf = Node(
-            package="robot_localization",
-            executable="ekf_node",
-            name="ekf_filter_node",
-            output="screen",
-            parameters=[os.path.join(
-                get_package_share_directory('ancle_pkg'),"params","ekf_config.yaml")],
-            condition=UnlessCondition(LaunchConfiguration('use_3d_ekf'))
     )
 
     # EKF Node: 3D mode, uses 2D lidar + IMU + 3D Lidar
@@ -144,7 +109,22 @@ def generate_launch_description():
             output="screen",
             parameters=[os.path.join(
                 get_package_share_directory('ancle_pkg'),"params","ekf_3D_config.yaml")],
-            condition=IfCondition(LaunchConfiguration('use_3d_ekf'))
+    )
+
+    fuse_odom = Node(
+            package="ancle_pkg",
+            executable="fuse_odom.py",
+            name="fuse_odom",
+            parameters=[{"use_sim_time": False}],
+            output="screen"
+    )
+
+    lidar_icp = Node(
+            package="ancle_pkg",
+            executable="lidar_icp.py",
+            name="lidar_icp",
+            parameters=[{"use_sim_time": False}],
+            output="screen"
     )
 
     # RViz Node 
@@ -170,7 +150,7 @@ def generate_launch_description():
                     get_package_share_directory('ancle_pkg'), 'launch', 'octomap.launch.py')]),
     )
 
-    # Wait that everything is settled before launching slam and octomap
+    # Wait that everything is ready before launching slam and octomap
     delayedNodes = TimerAction(
         period=10.0,
         actions=[slam_toolbox, octomap],
@@ -178,18 +158,18 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_rviz_arg,
-        declare_use_3d_ekf_arg,
         rplidar,
-        cyglidar,
+        #cyglidar,
         transform_rplidar_base_link,
         transform_imu_base_link,
-        transform_cyglidar_base_link,
+        #transform_cyglidar_base_link,
         imu_publisher,
         rf2o,
-        kiss_icp,
-        static_altimeter_odom,
-        ekf,
+        #project_rf2o,
+        #fuse_odom,
+        #lidar_icp,
+        #static_altimeter_odom,
         ekf_3D,
         rviz,
-        delayedNodes
+        # delayedNodes
     ])

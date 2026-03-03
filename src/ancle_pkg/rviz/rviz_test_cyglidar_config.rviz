@@ -7,8 +7,10 @@ Panels:
         - /Global Options1
         - /Status1
         - /PointCloud21
+        - /Image1
         - /Image1/Topic1
         - /Odometry1/Covariance1/Position1
+        - /Image2
       Splitter Ratio: 0.5
     Tree Height: 395
   - Class: rviz_common/Selection
@@ -91,7 +93,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Best Effort
-        Value: /depth_image
+        Value: /depth_image_raw
       Value: true
     - Angle Tolerance: 0.10000000149011612
       Class: rviz_default_plugins/Odometry

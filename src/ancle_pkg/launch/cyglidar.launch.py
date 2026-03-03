@@ -30,7 +30,7 @@ def generate_launch_description():
         description = "color mode [0 (HUE), 1 (RGB), 2 (GRAY)]")
 
     data_type_3d_arg = DeclareLaunchArgument(
-        "data_type_3d", default_value = TextSubstitution(text="1"),
+        "data_type_3d", default_value = TextSubstitution(text="0"),
         description = "3D data type [0 (DISTANCE), 1 (AMPLITUDE)]")
 
     filter_mode_arg = DeclareLaunchArgument(
@@ -59,7 +59,7 @@ def generate_launch_description():
 
 
     lidar_node = launch_ros.actions.Node(
-        package = 'cyglidar_custom_pkg',
+        package = 'cyglidar_d2_ros2',
         executable = 'cyglidar_d2_publisher',
         output = 'screen',
         parameters=[
