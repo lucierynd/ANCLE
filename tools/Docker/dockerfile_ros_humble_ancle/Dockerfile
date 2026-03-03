@@ -74,7 +74,7 @@ RUN git clone https://github.com/MAPIRlab/rf2o_laser_odometry.git
 # ANCLE custom package setup
 # =============================================================
 
-# COPY src/ancle_pkg /ros2_ws/src/ancle_pkg 
+COPY src/ancle_pkg /ros2_ws/src/ancle_pkg 
 
 # =============================================================
 # Final setup
