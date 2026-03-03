@@ -160,8 +160,8 @@ class LidarICP(Node):
         # Param
         self.declare_parameter("max_icp_iter", 30)
         self.declare_parameter("icp_tolerance", 1e-6)
-        self.declare_parameter("max_corr_dist", 0.1)
-        self.declare_parameter("voxel_size", 1.0)        # down-sample leaf
+        self.declare_parameter("max_corr_dist", 0.01)
+        self.declare_parameter("voxel_size", 0.05)        # down-sample leaf
         self.declare_parameter("normal_k", 5)            # k for normal estimation
         self.declare_parameter("min_scan_points", 150)
 
@@ -212,11 +212,13 @@ class LidarICP(Node):
         # extract XYZ from PointCloud2
         points = self._pc2_to_numpy(msg)
         if points is None or len(points) < self.min_scan_points:
+            self.get_logger().info("LidarICP: Not enough point ma louloutte")
             return
 
         # downsample
         points = self._voxel_downsample(points, self.voxel_size)
         if len(points) < self.min_scan_points:
+            self.get_logger().info("LidarICP: too much downsampling cocotte")
             return
 
         # transform initial guess from odom topic
