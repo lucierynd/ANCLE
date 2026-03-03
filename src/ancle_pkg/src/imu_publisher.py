@@ -29,9 +29,13 @@ class IMUPublisher(Node):
         # Configure gyroscope: 833 Hz, 2000 dps
         self.bus.write_byte_data(self.ADDRESS, 0x11, 0b01111100)
 
-        # --- Conversion factors ---
+        # Conversion factors
         self.ACC_SENS = 0.061 / 1000.0   # g/LSB
         self.GYRO_SENS = 70 / 1000.0     # dps/LSB
+
+        # Covariances values
+        self.BAD_COV = 1e6
+        self.GOOD_COV = 0.5
 
         # ROS 2 publisher
         self.publisher_ = self.create_publisher(Imu, 'imu/data', 10)
@@ -73,11 +77,20 @@ class IMUPublisher(Node):
             msg.angular_velocity.y = gy_rps
             msg.angular_velocity.z = gz_rps
 
+            # Adding covariance
+            msg.orientation_covariance[0] = self.BAD_COV
+            msg.orientation_covariance[4] = self.BAD_COV
+            msg.orientation_covariance[8] = self.BAD_COV
+
+            msg.angular_velocity_covariance[0] = self.GOOD_COV
+            msg.angular_velocity_covariance[4] = self.GOOD_COV
+            msg.angular_velocity_covariance[8] = self.GOOD_COV
+
+            msg.linear_acceleration_covariance[0] = self.GOOD_COV
+            msg.linear_acceleration_covariance[4] = self.GOOD_COV
+            msg.linear_acceleration_covariance[8] = self.GOOD_COV
+
             self.publisher_.publish(msg)
-            # self.get_logger().info(
-            #     f"Accel [m/s²]: X={ax_g:.3f}, Y={ay_g:.3f}, Z={az_g:.3f} | "
-            #     f"Gyro [rad/s]: X={gx_rps:.3f}, Y={gy_rps:.3f}, Z={gz_rps:.3f}"
-            # )
 
         except Exception as e:
             self.get_logger().error(f"Read error: {e}")
