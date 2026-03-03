@@ -68,30 +68,30 @@ class RF2OCovarianceGate(Node):
         self.previous_x = msg.pose.pose.position.x
         self.previous_y = msg.pose.pose.position.y
         
-        # associate covariance
-        BAD = 1e6
-        GOOD_POS = 0.05
-        GOOD_VEL = 0.1
-        GOOD_YAW = 0.05
+        # # associate covariance
+        # BAD = 1e6
+        # GOOD_POS = 0.05
+        # GOOD_VEL = 0.1
+        # GOOD_YAW = 0.05
 
-        pose_cov = np.array(msg.pose.covariance).reshape(6, 6)
-        twist_cov = np.array(msg.twist.covariance).reshape(6, 6)
+        # pose_cov = np.array(msg.pose.covariance).reshape(6, 6)
+        # twist_cov = np.array(msg.twist.covariance).reshape(6, 6)
 
-        pose_cov[0, 0] = GOOD_POS
-        pose_cov[1, 1] = GOOD_POS
+        # pose_cov[0, 0] = GOOD_POS
+        # pose_cov[1, 1] = GOOD_POS
 
-        twist_cov[0, 0] = GOOD_VEL
-        twist_cov[1, 1] = GOOD_VEL
+        # twist_cov[0, 0] = GOOD_VEL
+        # twist_cov[1, 1] = GOOD_VEL
 
-        if tilted:
-            pose_cov[5, 5] = BAD
-            twist_cov[5, 5] = BAD
-        else:
-            pose_cov[5, 5] = GOOD_YAW
-            twist_cov[5, 5] = GOOD_YAW            
+        # if tilted:
+        #     pose_cov[5, 5] = BAD
+        #     twist_cov[5, 5] = BAD
+        # else:
+        #     pose_cov[5, 5] = GOOD_YAW
+        #     twist_cov[5, 5] = GOOD_YAW            
 
-        msg.pose.covariance = pose_cov.flatten().tolist()
-        msg.twist.covariance = twist_cov.flatten().tolist()
+        # msg.pose.covariance = pose_cov.flatten().tolist()
+        # msg.twist.covariance = twist_cov.flatten().tolist()
 
         self.rf2o_pub.publish(msg)
 

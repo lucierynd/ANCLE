@@ -165,10 +165,10 @@ def generate_launch_description():
         #transform_cyglidar_base_link,
         imu_publisher,
         rf2o,
-        #project_rf2o,
+        project_rf2o,
         #fuse_odom,
         #lidar_icp,
-        #static_altimeter_odom,
+        static_altimeter_odom,
         ekf_3D,
         rviz,
         # delayedNodes
