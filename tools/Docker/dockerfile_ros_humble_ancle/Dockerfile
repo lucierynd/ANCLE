@@ -77,6 +77,12 @@ RUN git clone https://github.com/MAPIRlab/rf2o_laser_odometry.git
 COPY src/ancle_pkg /ros2_ws/src/ancle_pkg 
 
 # =============================================================
+# Python tool scripts
+# =============================================================
+
+COPY tools/python_src /tools/python_src
+
+# =============================================================
 # Final setup
 # =============================================================
 # Source ROS and build

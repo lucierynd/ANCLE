@@ -49,7 +49,7 @@ crwxrwxrwx  1 root     dialout 188,     1 Dec 11 10:40 ttyUSB1
 - SCL (yellow) → pin 5
 - SDA (green) → pin 3
 
-![**JETSON PIN DIAGRAM**](../images/jetson_pins.png)
+![**JETSON PIN DIAGRAM**](../images/jetson_pin.png)
 
 ## Launching docker
 
@@ -107,7 +107,7 @@ docker run -it --rm\
   --net=host \
   --env="DISPLAY=$DISPLAY" \
   --volume="/tmp/.X11-unix:/tmp/. X11-unix:rw" \
-  -v /home/seagrant-nuc/docker_shared:/docker_shared \
+  -v /home/seagrant-nuc/NUC_testing:/NUC_testing \
   --name ancle_ext_viz_container \
   ancle_ext_viz_image \
   bash
@@ -125,3 +125,10 @@ Start RVIZ using config file:
 ros2 run rviz2 rviz2 -d /docker_shared/rviz_octomap_slam.rviz
 ```
 
+# Recording trajectory
+
+Using the following command the obtained trajectory can be recorded and saved into a text file:
+
+```bash
+python3 /NUC_testing/save_trajectory.py /odometry/filtered
+```
