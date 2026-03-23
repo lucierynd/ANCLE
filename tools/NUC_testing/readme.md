@@ -107,7 +107,7 @@ docker run -it --rm\
   --net=host \
   --env="DISPLAY=$DISPLAY" \
   --volume="/tmp/.X11-unix:/tmp/. X11-unix:rw" \
-  -v /home/seagrant-nuc/NUC_testing:/NUC_testing \
+  -v /home/seagrant-nuc/ANCLE/tools/NUC_testing:/NUC_testing \
   --name ancle_ext_viz_container \
   ancle_ext_viz_image \
   bash
@@ -122,7 +122,7 @@ export ROS_DOMAIN_ID=12
 Start RVIZ using config file:
 
 ```bash
-ros2 run rviz2 rviz2 -d /docker_shared/rviz_octomap_slam.rviz
+ros2 run rviz2 rviz2 -d /NUC_testing/rviz_octomap_slam_config.rviz
 ```
 
 # Recording trajectory
